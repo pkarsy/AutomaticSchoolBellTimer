@@ -2,34 +2,24 @@
 # This module can be loaded with
 # load('timetable')
 
-# This block is used for live updates while editing the code
-
-if global.contains('ttinstances') && global.ttinstances != nil
+# This block is used for live updates
+do
   import strict
-  try
-    for tinst:global.ttinstances
-      print('Stopping', tinst.name)
-      tinst.disable()
-    end
-  except .. as err, msg
-    print("tinst.disable() :", err, ",", msg)
-  end
   # erases all Timetable global instances.
   # hopefully this allows GC to work
   for o:global()
     if classname(global.(o))=='Timetable'
       print('disabing',o,'and set to nil')
-      #global.(o).disable()
+      try
+        global.(o).disable()
+      except .. as err, msg
+        print(o, ".disable() :", err, ",", msg)
+      end
       global.(o)=nil
     end
   end
-  #
-  global.timetable = nil # optional
-  #
+  global.timetable = nil
   print('gc=',tasmota.gc())
-else
-  print('creating global.ttinstances')
-  global.ttinstances = {}
 end
 
 # encapsulates vars, strings, helper functions
@@ -131,7 +121,7 @@ def ttable_combo()
       self.pin = pin
       self.name = name
       print('pin =', self.pin, 'name =', self.name)
-      global.ttinstances[name]=self
+      #global.ttinstances[name]=self
       gpio.pin_mode(self.pin, gpio.OUTPUT)
       ##
       do
@@ -193,6 +183,8 @@ def ttable_combo()
       #
       self.stat_topic = topic + 'messages'
       print('Using', self.stat_topic, 'for publishing messages')
+      global.(self.name)=self
+      print('Global variable name', self.name,' is the timetable instance')
       #
       print('INIT OK')
       
@@ -527,10 +519,11 @@ def ttable_combo()
     end
     
     def disable() # Releases recourses to be garbage collected by BerryVM
-      if !global.ttinstances.has(self.name) return end
+      #if !global.ttinstances.has(self.name) return end
+      if global.(self.name) != self return end
       self.remove_cron_entries()
       self.bell_off()
-      global.ttinstances.remove(self.name)
+      #global.ttinstances.remove(self.name)
       mqtt.unsubscribe(self.timetable_topic)
       mqtt.unsubscribe(self.duration_topic)
       mqtt.unsubscribe(self.bell_topic)
@@ -560,11 +553,12 @@ def ttable_combo()
     if type(name)=='string' && size(name)>0
       # we accept it
     else
-      #name = tasmota.cmd('Topic', true)['Topic']
-      name = tasmota.hostname()
+      name = tasmota.cmd('Topic', true)['Topic']
+      #name = tasmota.hostname()
     end
-    if global.ttinstances.has(name)
-      print(name, 'this timetable name is used')
+    #if global.ttinstances.has(name)
+    if global.(name) != nil
+      print('global variable', name, 'is used')
       return
     end
     if type(pin)!='int' || pin<0 || pin>30
@@ -596,11 +590,12 @@ ttable_combo = nil
 
 # 08:10 08:55 09:00 09:45 09:55 10:40 10:50 11:35 11:45 12:30 12:40 13:25 13:30 14:10
 
-# GPIO-1 is connected with the Relay or better a triac based SSR
-# as classic bells are inductive loads
+# GPIO-1 is connected with the Relay. Classic bells are inductive loads and MAY be
+# an option to use an ~220V SSR (these are TRIAC based as far as I know)
 # the second argument is the name of the timetable and if nil,
 # it gets the "topic" from the tasmota module
+
 # This declaration should be in autoexec.be, but for development allows fast redeploy
-var t = global.timetable(1)
+global.timetable(1)
 
 # END

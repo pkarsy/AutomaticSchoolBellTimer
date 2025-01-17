@@ -587,7 +587,7 @@ ttable_combo = nil
 # Now we have no access to ttable_combo() and we can only call
 # [global.]timetable(GPIO_PIN, "name")
 
-
+# sample timetable common on greek schools
 # 08:10 08:55 09:00 09:45 09:55 10:40 10:50 11:35 11:45 12:30 12:40 13:25 13:30 14:10
 
 # GPIO-1 is connected with the Relay. Classic bells are inductive loads and MAY be
@@ -596,6 +596,7 @@ ttable_combo = nil
 # it gets the "topic" from the tasmota module
 
 # This declaration should be in autoexec.be, but for development allows fast redeploy
-global.timetable(1)
-
+if global.('BELL_PIN')!=nil
+  global.timetable(BELL_PIN)
+end
 # END

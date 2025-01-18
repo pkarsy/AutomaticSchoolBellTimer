@@ -5,16 +5,17 @@ WARNING WORKING WITH MAINS CAN BE VERY DANGEROUS KEEP ALL PRECAUTIONS AND AT YOU
 
 PHOTO
 
-School bell based on ESP32x Tasmota
-In this page we discuss about using "normal" bells usually electromechanical and not speakers or similar audio equipment.
-
-Most (at least) schools are using automatic bells which are on the most part quite unreliable.
-The time is drifting, creating a confusion among the students and teacher whether the ring is delayed or working etc
+School bell based on ESP32x Tasmota. 
+We will use real bells, usually electromechanical and not speakers or similar audio equipment.
 
 ## Motivation
-Although there are a lot of solutions for the automation of a school bell, very few of them seem to be a good. Many dedicated school bell timers use anchient technology, without network connectivity (= time drift) and a horrible hardware control panel.
-A lot of generic timers have very limited number of times usually smaller than a 14-20 a school needs.
-and usually no way to keep accurate time. This basicslly means that the bell never rings on the expected time. 1-2 min error does not seem a problem at first glance, but the real problem is the argument in the classroom that the time has already passed etc. Also none of the timers I have checked is capable of switching to Daylight time. There is of course the solution of using a computer with a suitable application. But then the complexity and the unreliability is bigger. Not to forget operating system updates, broken harware high electricity consumption, audio equipment etc. The ESP32 based boards are very well suited for this task, provided you like to DIY things of course.
+Although there are a lot of solutions for the automation of a school bell, very few of them are particularly good.
+- Many dedicated school bell timers use anchient technology, without network connectivity (= time drift) and a horrible hardware control panel.
+- A lot of generic timed switches have very limited number of timers usually smaller than a 14-20 a school needs
+- Usually no way to keep accurate time. This basically means that the bell never rings on the expected time. A few minutes error does not seem a problem at first glance, but the real problem is the argument in the classroom that the time has already passed etc. Also none of the timers I have checked is capable of switching to Daylight time.
+- There is of course the solution of using a computer with a suitable application. But then the complexity and the unreliability is bigger. Not to forget operating system updates, broken harware high electricity consumption, audio equipment etc.
+
+The ESP32 based boards are very well suited for this task, provided you like to DIY things of course.
 
 Why not esp8266 boards like sonoff
 Whith stock firmware, there is the problem that the timers are not enough.

@@ -33,7 +33,7 @@ def ttable_combo()
   import json
   
   var title='TTABLE :'
-  var ttdir = '/_timetable_save' # contains the config json
+  var ttdir = '/timetable' # contains the config json
 
   # Parses the timetable ie '1000 13:55 8: 00'
   def parse_timetable(s)
@@ -71,7 +71,7 @@ def ttable_combo()
     s= string.tr(s,':','') # 10:00 -> 1000
     s=string.split(s,' ') # '1000 1200' -> ['1000','1200']
     for c:s
-      if size(c)==3 c='0'+c end
+      #if size(c)==3 c='0'+c end
       if size(c)!=4
         print('Bad time format : ' .. c)
         continue
@@ -93,21 +93,21 @@ def ttable_combo()
   class Timetable
     #
     var pin # this is the physical GPIO pin
-    var name # controls the topic used tt/#name#/bell etc
+    var idx # controls the topic used tt/topic/bell+idx etc
     var disabled # disables all functionality bell, timers etc
-    var stat_topic # tt/#name#/messages
+    var stat_topic # tt/topic/messages+idx
     #
-    var timetable_topic # timetable control topic tt/#name#/timetable
+    var timetable_topic # timetable control topic tt/topic/timetable+idx
     var timetable # example '08:00 09:15 10:00 14:00 15:30'
     var timetable_lastpub # The last incoming mqtt message (even id came from us)
     var timetable_out_mqtt # the last messsage WE published
     #
     var duration # time in seconds the bell is ringing (number)
-    var duration_topic # the topic tt/<name>/duration of the duration (string)
+    var duration_topic # the topic tt/topic/duration+idx of the duration (string)
     var duration_lastpub # the last published message, even our own (string)
     var duration_out_mqtt # this is what we send (string)
     #
-    var bell_topic # tt/#name#/bell
+    var bell_topic # tt/topic/bell+idx
     var bell_lastpub
     var bell_out_mqtt
     #
@@ -115,13 +115,22 @@ def ttable_combo()
     var active_days # usually '*' or 'MON-FRI' or '1-5' must be understandabe by tasmota.set_cron()
     var active_days_lastpub
     var active_days_out_mqtt
+    static var topic = 'tt/'+tasmota.cmd('Topic', true)['Topic']+'/'
+    static default_timetable = '08:10 08:55'
+    static default_duration = 6.0
+    static default_active_days = '1-5'
     
-    def init(pin, name)
+    def init(pin, idx)
       self.disabled = false
       self.pin = pin
-      self.name = name
-      print('pin =', self.pin, 'name =', self.name)
-      #global.ttinstances[name]=self
+      self.idx = idx
+      #
+      #self.active_days = '1-5' # safe defaults instead of nil
+      #self.duration = 6.0
+      #self.timetable = '08:10 08:55'
+      #
+      print('pin =', self.pin)
+      if idx != '' print('idx =', self.idx) end
       gpio.pin_mode(self.pin, gpio.OUTPUT)
       ##
       do
@@ -137,54 +146,54 @@ def ttable_combo()
       #
       self.install_cron_entries() # we can do this as timetable amd active_days are loaded
       #
-      var topic = 'tt/'+self.name+'/'
+      #var topic = 'tt/'+Timetable.topic+'/'
       #
-      self.timetable_topic = topic + 'timetable'
+      self.timetable_topic = Timetable.topic + 'timetable' + idx
       print('Subscribing to', self.timetable_topic, 'for timetable control')
       mqtt.subscribe(self.timetable_topic,
         def (_topic, _idx , tt)
-          print('Sub =', _topic , 'Msg =', tt)
+          #print('Sub =', _topic , 'Msg =', tt)
           self.timetable_lastpub = tt
           self.set_timetable(tt)
         end
       )
       #
-      self.duration_topic = topic + 'duration'
+      self.duration_topic = Timetable.topic + 'duration' + idx
       print('Subscribing to', self.duration_topic, 'for setting bell duration')
       mqtt.subscribe(self.duration_topic,
         def (_topic, _idx , dur)
-          print('Sub =', _topic , 'Msg =', dur)
+          #print('Sub =', _topic , 'Msg =', dur)
           self.duration_lastpub = dur
           self.set_duration(dur)
         end
       )
       #
-      self.bell_topic = topic + 'bell'
+      self.bell_topic = Timetable.topic + 'bell' + idx
       mqtt.publish(self.bell_topic, '0', true)
       self.bell_out_mqtt = '0'
       print('Subscribing to', self.bell_topic, 'for manual bell on/off')
       mqtt.subscribe(self.bell_topic,
         def (_topic, _idx , onoff)
-          print('Sub =', _topic , 'Msg =', onoff)
+          #print('Sub =', _topic , 'Msg =', onoff)
           self.bell_lastpub = onoff
           self.bell_onoff(onoff)
         end
       )
       #
-      self.active_days_topic = topic + 'active_days'
+      self.active_days_topic = Timetable.topic + 'active_days' + idx
       print('Subscribing to', self.active_days_topic, 'for setting the active days')
       mqtt.subscribe(self.active_days_topic,
         def (_topic, _idx, active_days)
-          print('Sub =', _topic , 'Msg =', active_days)
+          #print('Sub =', _topic , 'Msg =', active_days)
           self.active_days_lastpub = active_days
           self.set_active_days(active_days)
         end
       )
       #
-      self.stat_topic = topic + 'messages'
+      self.stat_topic = Timetable.topic + 'messages' + idx
       print('Using', self.stat_topic, 'for publishing messages')
-      global.(self.name)=self
-      print('Global variable name', self.name,' is the timetable instance')
+      global.('tt'+idx)=self
+      print('Global variable name', '"tt'+idx+'"', 'is the timetable instance')
       #
       print('INIT OK')
       
@@ -194,25 +203,32 @@ def ttable_combo()
       # Gets the settings from the disk and returns a [duration,timetable,active_days] list
       #if self.disabled print('fetch_disk_settings: disabled') return end
       var saveflag = false
-      var j # the settings as a string and then a map
+      var j # the settings as a map
       try
-        var f = open(ttdir + '/' + self.name + '.json')
-        j = f.read()
+        var fn = ttdir + '/tt' + self.idx + '.json'
+        if p print('Opening "' .. fn .. '" to get the settings') end
+        var f = open(fn)
+        var data = f.read()
         f.close()
-        j = json.load(j)
-        if classname(j)!='map'
-          print('Cannot parse JSON')
-          j={}
-          saveflag = true
+        j = json.load(data)
+        if classname(j) != 'map'
+          if p print('Cannot parse JSON') end
+          j=nil
+          #j = {}
+          #saveflag = true
         end
       except .. as err, msg
-        if p print('Error loading/missing settings, using defaults') end #,err ,msg
-        saveflag = true
-        j={}
+        if p print('Error loading settings, using defaults') end
+        #saveflag = true
+        #j = {}
       end
       #
+      if j==nil || j=={}
+        self.save_settings_unc(Timetable.default_duration, Timetable.default_timetable, Timetable.default_active_days )
+        return [Timetable.default_duration, Timetable.default_timetable, Timetable.default_active_days]
+      end
       #
-      var duration
+      var duration # = Timetable.default_duration
       do
         var duration_file = j.find('duration')
         if type(duration_file)=='int' || type(duration_file)=='real'
@@ -220,14 +236,14 @@ def ttable_combo()
           if p print('Got duration from settings', duration_file) end
           duration = self.parse_duration(duration_file) # TODO
           if duration != duration_file
-            print('fetch_disk_settings: duration file=', duration_file, 'new=', duration)
+            if p print('fetch_disk_settings: duration file=', duration_file, 'new=', duration) end
             saveflag = true
           end
         else
           # bogus val
-          if p print('Discarding bogus duration :', duration, type(duration)) end
+          if p print('bogus/missing duration :', duration, type(duration)) end
           saveflag = true
-          duration = 5.0
+          duration = Timetable.default_duration
         end
       end
       #
@@ -235,19 +251,21 @@ def ttable_combo()
       do
         var timetable_file = j.find('timetable')
         if type(timetable_file) != 'string'
-          if p print('Discarding bogus timetable : ' .. timetable) end
-          timetable = '08:00 08:55'
+          if p print('bogus/missing timetable : ' .. timetable_file) end
+          timetable = Timetable.default_timetable
           saveflag = true
         else
           if p print('Got timetable from settings :', timetable_file) end
           timetable = parse_timetable(timetable_file)
           if size(timetable)==0
+            if p print('bogus/missing timetable') end
             saveflag = true
-            timetable = '08:00 08:55'
-            print('Using default timetable', timetable)
+            timetable = Timetable.default_timetable
+            if p print('Revert to default timetable', timetable) end
           end
           if timetable != timetable_file
-            print('fetch_disk_settings: timetable file=', timetable_file, 'new=', timetable)
+            # Can happen only if timetable is edited directly on disk
+            if p print('fetch_disk_settings: timetable file=', timetable_file, 'new=', timetable) end
             saveflag=true
           end
         end
@@ -258,10 +276,10 @@ def ttable_combo()
       do
         var active_days_file = j.find('active_days')
         if type(active_days_file)!='string' && type(active_days_file)!='int'
-          if p print('Discarding bogus active_days :', active_days_file, type(active_days_file) ) end
-          active_days='1-5' # MON-FRI
+          if p print('bogus/missing active_days :', active_days_file) end
+          active_days= Timetable.default_active_days
           saveflag = true
-          if p print('default =', active_days) end
+          if p print('Using default active_days =', active_days) end
         else
           active_days = str(active_days_file)
           if p print('Got active_days from settings :', active_days) end
@@ -269,12 +287,6 @@ def ttable_combo()
       end
 
       if saveflag self.save_settings_unc(duration, timetable, active_days) end
-      #
-      #print('got settings from storage', self.duration , self.timetable, self.active_days)
-
-      #for e:string.split(self.timetable, ' ')
-      #  self.add_cron_entry(e)
-      #end
       return [duration, timetable, active_days]
 
     end
@@ -290,7 +302,7 @@ def ttable_combo()
     def save_settings_unc(dur, tt, ad)
       var j = {'duration':dur, 'timetable':tt, 'active_days':ad}
       try
-        var f = open(ttdir+'/'+self.name+'.json', 'w')
+        var f = open(ttdir + '/tt' + self.idx + '.json', 'w')
         f.write(json.dump(j))
         f.close()
         print("Saved settings to flash")
@@ -327,7 +339,7 @@ def ttable_combo()
 
     def cron_id(c)
       # Used to create a unique name for every cronjob
-      return self.name + '-' + c
+      return 'tt'+self.idx + '-' + c
     end
 
     def pub(m)
@@ -466,7 +478,7 @@ def ttable_combo()
         return
       end
       if tt == self.timetable ## string NEW TODO .concat(' ')
-        print('The timetable is the same bit by bit')
+        #print('The timetable is the same bit by bit')
         self.update_timetable_mqtt()
         return
       end
@@ -489,41 +501,44 @@ def ttable_combo()
     end
 
     def parse_active_days(active_days)
+      if active_days == nil return self.active_days end
       active_days = string.tr(active_days,' \"\'\n\t\r', '')
+      if active_days == '' return self.active_days end
       tasmota.remove_cron('test')
       try
         tasmota.add_cron("0 0 0 * * "+active_days, def() end , 'test') # empty closure for test
       except 'value_error'
         self.update_active_days_mqtt()
         print('Invalid active days')
-        return
+        return self.active_days
       end
       tasmota.remove_cron('test')
       return active_days
     end
 
     def set_active_days(active_days_raw)
-      #print('DEBUG active_days arg=', active_days_raw, 'inc mqtt=',self.active_days_lastpub )
+      #print('DEBUG1 active_days_raw='..active_days_raw)
       var active_days = self.parse_active_days(active_days_raw)
+      #print('DEBUG2 active_days='..active_days)
       if size(active_days) == 0 || self.active_days == active_days
-        print('Not replacing active days')
+        # print('Not replacing active days')
         self.update_active_days_mqtt()
         return
       end
+      #print('DEBUG3 active_days='..active_days)
       self.remove_cron_entries()
       self.active_days = active_days
       self.save_settings()
       self.install_cron_entries()
       self.update_active_days_mqtt()
-      self.pub('active days updated')
+      #self.pub('active days updated')
     end
     
     def disable() # Releases recourses to be garbage collected by BerryVM
-      #if !global.ttinstances.has(self.name) return end
-      if global.(self.name) != self return end
+      if global.('tt'+self.idx) != self return end
       self.remove_cron_entries()
       self.bell_off()
-      #global.ttinstances.remove(self.name)
+      #
       mqtt.unsubscribe(self.timetable_topic)
       mqtt.unsubscribe(self.duration_topic)
       mqtt.unsubscribe(self.bell_topic)
@@ -534,12 +549,12 @@ def ttable_combo()
 
     def deinit()
       if !self.disabled self.disable() end
-      print(self.name + '.deinit()')
+      print('tt'+self.idx + '.deinit()')
     end
 
   end # class timetable
 
-  def instance_generator(pin, name)
+  def instance_generator(pin, idx)
     do
       import path
       if path.exists(ttdir) && !path.isdir(ttdir)
@@ -550,34 +565,27 @@ def ttable_combo()
         path.mkdir(ttdir)
       end
     end
-    if type(name)=='string' && size(name)>0
-      # we accept it
-    else
-      name = tasmota.cmd('Topic', true)['Topic']
-      #name = tasmota.hostname()
+    if idx==nil
+      idx=''
+    elif type(idx)!='int'
+      print('Need an index')
+      return
     end
-    #if global.ttinstances.has(name)
-    if global.(name) != nil
-      print('global variable', name, 'is used')
+    idx=str(idx)
+    if global.('tt'+idx) != nil
+      print('global var', 'tt'+idx, 'is used')
       return
     end
     if type(pin)!='int' || pin<0 || pin>30
-      print(title,'Wrong PIN, 0-30 accepted', pin)
+      print(title,'Wrong PIN, 0-30 accepted, be careful many pins are unusable', pin)
       return
     end
-    print('Creating timetable :', name)
-    return Timetable(pin , name)
-  end
-
-  do
-    # The global function "timetable" is a generator for
-    # the timetable instances for these reasons :
-    # - We can pass parameters such as pin etc
-    # - we check the validity of the parameters BEFORE the instance creation
-    # - We can have multiple timetable objects running at the same time
-    global.timetable = instance_generator
-  end
-
+    print('Creating timetable :', 'tt'+idx)
+    # Created the 'tt' or 'tt2' etc instance
+    global.('tt'+idx) = Timetable(pin , idx)
+    #return global.('tt'+idx)
+  end # instance_generator
+  global.timetable = instance_generator
 end # ttable_combo()
 
 # creates the "timetable" global function
@@ -585,9 +593,8 @@ ttable_combo()
 # Ensures we cannot call ttable_combo() again
 ttable_combo = nil
 # Now we have no access to ttable_combo() and we can only call
-# [global.]timetable(GPIO_PIN, "name")
+# [global.]timetable(GPIO_PIN [, idx])
 
-# sample timetable common on greek schools
 # 08:10 08:55 09:00 09:45 09:55 10:40 10:50 11:35 11:45 12:30 12:40 13:25 13:30 14:10
 
 # GPIO-1 is connected with the Relay. Classic bells are inductive loads and MAY be
@@ -595,8 +602,7 @@ ttable_combo = nil
 # the second argument is the name of the timetable and if nil,
 # it gets the "topic" from the tasmota module
 
-# This declaration should be in autoexec.be, but for development allows fast redeploy
+# This declaration should be in autoexec.be, but for development allows fast reload
 if global.('BELL_PIN')!=nil
   global.timetable(BELL_PIN)
 end
-# END

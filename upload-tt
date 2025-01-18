@@ -14,6 +14,8 @@ test -z "$BERRY_FILENAME" && export BERRY_FILENAME="timetable.be"
 # or "SAVE" (compile run and save to flash filesystem)
 # Most of the time you want the "RUN" command to avoid flash wear
 test -z "$BERRY_COMMAND" && export BERRY_COMMAND="RUN"
+test "$1" = "-s" && export BERRY_COMMAND="SAVE"
+
 # It is used on "TCP" mode. Tcpberry must be loaded
 test -z "$TCP_SERVER" && export TCP_SERVER="10.5.2.170:1001"
 #

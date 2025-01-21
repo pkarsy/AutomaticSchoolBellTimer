@@ -1,31 +1,11 @@
 # This block is used for live updates
-
-do
-  import strict
-  # erases all TimetableWeb global instances.
-  # hopefully this allows GC to work
-  for o:global()
-    if classname(global.(o))=='TimetableWeb'
-      print('disabing TimetableWeb instance',o)
-      try
-        global.(o).disable()
-      except .. as err, msg
-        print(o, ".disable() :", err, ",", msg)
-      end
-      global.(o)=nil
-    end
-  end
-  global.timetableweb = nil
-  #print('gc=',tasmota.gc())
-end
-
 do
   import strict
   # erases all Timetable global instances.
   # hopefully this allows GC to work
   for o:global()
     if classname(global.(o))=='Timetable'
-      print('disabing Timetable instance',o)
+      print('disabing',o,'and set to nil')
       try
         global.(o).disable()
       except .. as err, msg
@@ -35,28 +15,21 @@ do
     end
   end
   global.timetable = nil
+  print('gc=',tasmota.gc())
 end
 
 # encapsulates vars, strings, helper functions
 # and the main class
 def ttable_combo()
-  #
+  
   import strict
   import string
   import gpio
+  import mqtt
   import json
-  #
-  var title='TTABLE :'
-  var IDXS=['','2','3','4','5']
   
-  def idxcheck(idx)
-    if idx==nil || idx==0 || idx==1 idx='' end
-    idx=str(idx)
-    if IDXS.find(idx)==nil
-      return -1
-    end
-    return idx
-  end
+  var title='TTABLE :'
+  var ttdir = '/timetable' # contains the config json
 
   # Parses the timetable ie '1000 13:55 8: 00'
   def parse_timetable(s)
@@ -80,7 +53,7 @@ def ttable_combo()
     end
     #
     if type(s)!='string' print('parse_timetable : wrong arg ' .. s .. 'type=' .. type(s)) return '' end
-    s = string.tr(s,'\"\'\n\t\r,.#$-','          ')
+    s = string.tr(s,'\"\'\n\t\r,.#$-',' ')
     if true
       var s1
       # replaces multiple spaces with a single space
@@ -118,12 +91,30 @@ def ttable_combo()
     var pin # this is the physical GPIO pin
     var idx # controls the topic used tt/topic/bell+idx etc
     var disabled # disables all functionality bell, timers etc
+    var stat_topic # tt/topic/messages+idx
     #
+    var timetable_topic # timetable control topic tt/topic/timetable+idx
     var timetable # example '08:00 09:15 10:00 14:00 15:30'
+    var timetable_lastpub # The last incoming mqtt message (even id came from us)
+    var timetable_out_mqtt # the last messsage WE published
     #
     var duration # time in seconds the bell is ringing (number)
-    var active_days # usually '*' or 'MON-FRI' or '1-5' must be understandabe by tasmota.set_cron()
+    var duration_topic # the topic tt/topic/duration+idx of the duration (string)
+    var duration_lastpub # the last published message, even our own (string)
+    var duration_out_mqtt # this is what we send (string)
     #
+    var bell_topic # tt/topic/bell+idx
+    var bell_lastpub
+    var bell_out_mqtt
+    #
+    var active_days_topic
+    var active_days # usually '*' or 'MON-FRI' or '1-5' must be understandabe by tasmota.set_cron()
+    var active_days_lastpub
+    var active_days_out_mqtt
+    #
+    var webserver
+    #
+    static var topic = 'tt/'+tasmota.cmd('Topic', true)['Topic']+'/'
     static default_timetable = '08:10 08:55'
     static default_duration = 6.0
     static default_active_days = '1-5'
@@ -133,6 +124,10 @@ def ttable_combo()
       self.pin = pin
       self.idx = idx
       #
+      #self.active_days = '1-5' # safe defaults instead of nil
+      #self.duration = 6.0
+      #self.timetable = '08:10 08:55'
+      #
       print('pin =', self.pin)
       if idx != '' print('idx =', self.idx) end
       gpio.pin_mode(self.pin, gpio.OUTPUT)
@@ -141,11 +136,65 @@ def ttable_combo()
         var settings = self.fetch_disk_settings(true) # true = print verbose messages
         #
         self.duration = settings[0]
+        self.duration_out_mqtt = str(self.duration) # only for startup no need to send msg
         self.timetable = settings[1]
+        self.timetable_out_mqtt = self.timetable
         self.active_days = settings[2]
+        self.active_days_out_mqtt = self.active_days
       end
       #
       self.install_cron_entries() # we can do this as timetable amd active_days are loaded
+      #
+      #var topic = 'tt/'+Timetable.topic+'/'
+      #
+      self.timetable_topic = Timetable.topic + 'timetable' + idx
+      print('Subscribing to', self.timetable_topic, 'for timetable control')
+      mqtt.subscribe(self.timetable_topic,
+        def (_topic, _idx , tt)
+          #print('Sub =', _topic , 'Msg =', tt)
+          self.timetable_lastpub = tt
+          self.set_timetable(tt)
+        end
+      )
+      #
+      self.duration_topic = Timetable.topic + 'duration' + idx
+      print('Subscribing to', self.duration_topic, 'for setting bell duration')
+      mqtt.subscribe(self.duration_topic,
+        def (_topic, _idx , dur)
+          #print('Sub =', _topic , 'Msg =', dur)
+          self.duration_lastpub = dur
+          self.set_duration(dur)
+        end
+      )
+      #
+      self.bell_topic = Timetable.topic + 'bell' + idx
+      mqtt.publish(self.bell_topic, '0', true)
+      self.bell_out_mqtt = '0'
+      print('Subscribing to', self.bell_topic, 'for manual bell on/off')
+      mqtt.subscribe(self.bell_topic,
+        def (_topic, _idx , onoff)
+          #print('Sub =', _topic , 'Msg =', onoff)
+          self.bell_lastpub = onoff
+          self.bell_onoff(onoff)
+        end
+      )
+      #
+      self.active_days_topic = Timetable.topic + 'active_days' + idx
+      print('Subscribing to', self.active_days_topic, 'for setting the active days')
+      mqtt.subscribe(self.active_days_topic,
+        def (_topic, _idx, active_days)
+          #print('Sub =', _topic , 'Msg =', active_days)
+          self.active_days_lastpub = active_days
+          self.set_active_days(active_days)
+        end
+      )
+      #
+      self.stat_topic = Timetable.topic + 'messages' + idx
+      print('Using', self.stat_topic, 'for publishing messages')
+      global.('tt'+idx)=self
+      print('Global variable name', '"tt'+idx+'"', 'is the timetable instance')
+      #
+      #self.webserver = WebPage(idx)
       #
       print('INIT OK')
       
@@ -157,7 +206,7 @@ def ttable_combo()
       var saveflag = false
       var j # the settings as a map
       try
-        var fn = '/.tt' + self.idx + '.json'
+        var fn = ttdir + '/tt' + self.idx + '.json'
         if p print('Opening "' .. fn .. '" to get the settings') end
         var f = open(fn)
         var data = f.read()
@@ -166,9 +215,13 @@ def ttable_combo()
         if classname(j) != 'map'
           if p print('Cannot parse JSON') end
           j=nil
+          #j = {}
+          #saveflag = true
         end
       except .. as err, msg
         if p print('Error loading settings, using defaults') end
+        #saveflag = true
+        #j = {}
       end
       #
       if j==nil || j=={}
@@ -250,7 +303,7 @@ def ttable_combo()
     def save_settings_unc(dur, tt, ad)
       var j = {'duration':dur, 'timetable':tt, 'active_days':ad}
       try
-        var f = open('/.tt' + self.idx + '.json', 'w')
+        var f = open(ttdir + '/tt' + self.idx + '.json', 'w')
         f.write(json.dump(j))
         f.close()
         print("Saved settings to flash")
@@ -290,48 +343,87 @@ def ttable_combo()
       return 'tt'+self.idx + '-' + c
     end
 
+    def pub(m)
+      if m==nil return end
+      mqtt.publish(self.stat_topic, m)
+    end
+
     def bell_on_with_check()
       # This function is called by cron, the difference is the check
       # that the ESP32 time is correct, or at least it is set to a reasonable
       # value. This check can save us from triggering the bell in a very unconvenient time.
+      # for better reliablility it is recommendent to use a DS3231 clock
       if tasmota.rtc_utc() < 1720000000
+        print('The system time is wrong')
+        # No point in publishing as probably there is no internet connection
+        # self.pub('The system time is wrong')
         print('The system time is wrong')
         return
       end
       self.bell_on()
     end
 
+    def update_bell_mqtt(msg)
+      var v = str(gpio.digital_read(self.pin)) # 0 or 1
+      # if we did not send this message || last published message was different
+      if self.bell_out_mqtt != v || self.bell_lastpub != v
+        self.bell_out_mqtt = v
+        mqtt.publish(self.bell_topic, v, true)
+        self.pub(msg)
+      end
+    end
+
     def bell_on()
+      #print('DEBUG bell_on()')
       if self.disabled print('bell_on: disabled') return end
       if self.duration < 0.1
-        print('The bell is disabled')
+        self.update_bell_mqtt('The bell is disabled')
+        #self.pub('The bell is disabled')
         return
       end
       if gpio.digital_read(self.pin) == 0 # return end 
         gpio.digital_write(self.pin, 1)
+        #if self.bell_out_mqtt!='1' # This on is triggered by us
         tasmota.remove_timer(self)
         tasmota.set_timer( int(self.duration*1000) , /->self.bell_off() , self )
       end
-      print('The bell is ON')
+      self.update_bell_mqtt('The bell is ON')
+      #self.pub()
     end
 
     def bell_off()
       if self.disabled print('bell_off: disabled') return end
       tasmota.remove_timer(self)
+      #if gpio.digital_read(self.pin) == 0 return end
       gpio.digital_write(self.pin, 0)
-      print('The bell is OFF')
+      #self.pub()
+      self.update_bell_mqtt('The bell is OFF')
     end
 
     def bell_onoff(x)
+      #print('DEBUG arg =', x, 'self.bell_lastpub =', self.bell_lastpub, 'self.bell_out_mqtt =', self.bell_out_mqtt)
       if self.disabled print('bell_onoff: disabled') return end
       x = str(x)
+      #if type(x)!='string' print('not a string') return end
       x = string.tr(x, ' \"\'\n\t\r', '')
       if x == '1'
         self.bell_on()
       elif x == '0'
         self.bell_off()
       else
-        print('bell_onoff : Use parameter 0/1')
+        mqtt.publish(self.bell_topic, str(gpio.digital_read(self.pin)) )
+        print('Use parameter 0/1')
+      end
+    end
+
+    def update_duration_mqtt()
+      # var v=string.format("%.1f", self.duration)
+      # berry can correctly convert real to string for example 1.3 -> '1.3' not '1.29999'
+      var d = str(self.duration)
+      # if we did not send this message || last published message was different
+      if self.duration_out_mqtt != d || self.duration_lastpub != d
+        self.duration_out_mqtt = d
+        mqtt.publish(self.duration_topic, d, true)
       end
     end
 
@@ -356,13 +448,26 @@ def ttable_combo()
 
     def set_duration(dur) # accepts real, integer or string
       if self.disabled print('set_duration: disabled') return end
+      #if self.duration_out_mqtt == dur && self.duration_lastpub == dur return end # is common
       dur = self.parse_duration(dur)
       if dur==nil || self.duration == dur # berry can correctly do comparisons with reals, I dont know how, but it works
+        self.update_duration_mqtt()
         return
       end
       self.duration = dur
+      self.update_duration_mqtt()
       self.save_settings()
-      print('New duartion', dur, 'saved')
+      #
+      self.pub('Duration = ' .. dur .. ' sec')
+    end
+
+    def update_timetable_mqtt()
+      var tt = self.timetable
+      # if we did not send this message || last published message was different
+      if self.timetable_out_mqtt != tt || self.timetable_lastpub != tt
+        self.timetable_out_mqtt = tt
+        mqtt.publish(self.timetable_topic, tt, true)
+      end
     end
 
     def set_timetable(tt)
@@ -370,11 +475,12 @@ def ttable_combo()
       tt = parse_timetable(tt)
       if size(tt)==0
         print('Cannot parse', tt)
+        self.update_timetable_mqtt()
         return
       end
       if tt == self.timetable ## string NEW TODO .concat(' ')
         #print('The timetable is the same bit by bit')
-        #self.update_timetable_mqtt()
+        self.update_timetable_mqtt()
         return
       end
       self.remove_cron_entries() # removes the old cron
@@ -383,6 +489,16 @@ def ttable_combo()
       self.save_settings() # saves the new timetable
       self.install_cron_entries() # creates the new cron
       #
+      self.update_timetable_mqtt() # sends the tt to the tt topic (if needed)
+    end
+
+    def update_active_days_mqtt()
+      var ad = self.active_days
+      # if we did not send this message || last published message was different
+      if self.active_days_out_mqtt != ad || self.active_days_lastpub != ad
+        self.active_days_out_mqtt = ad
+        mqtt.publish(self.active_days_topic, ad, true)
+      end
     end
 
     def parse_active_days(active_days)
@@ -393,6 +509,7 @@ def ttable_combo()
       try
         tasmota.add_cron("0 0 0 * * "+active_days, def() end , 'test') # empty closure for test
       except 'value_error'
+        self.update_active_days_mqtt()
         print('Invalid active days')
         return self.active_days
       end
@@ -401,39 +518,61 @@ def ttable_combo()
     end
 
     def set_active_days(active_days_raw)
+      #print('DEBUG1 active_days_raw='..active_days_raw)
       var active_days = self.parse_active_days(active_days_raw)
+      #print('DEBUG2 active_days='..active_days)
       if size(active_days) == 0 || self.active_days == active_days
         # print('Not replacing active days')
+        self.update_active_days_mqtt()
         return
       end
+      #print('DEBUG3 active_days='..active_days)
       self.remove_cron_entries()
       self.active_days = active_days
       self.save_settings()
       self.install_cron_entries()
-      #self.update_active_days_mqtt()
-      print('active days updated')
+      self.update_active_days_mqtt()
+      #self.pub('active days updated')
     end
     
     def disable() # Releases recourses to be garbage collected by BerryVM
       if global.('tt'+self.idx) != self return end
       self.remove_cron_entries()
       self.bell_off()
+      #
+      mqtt.unsubscribe(self.timetable_topic)
+      mqtt.unsubscribe(self.duration_topic)
+      mqtt.unsubscribe(self.bell_topic)
+      mqtt.unsubscribe(self.active_days_topic)
+      #self.pub('DISABLED')
       self.disabled = true
     end
 
     def deinit()
       if !self.disabled self.disable() end
-      print(self, 'deinit()')
+      print('tt'+self.idx + '.deinit()')
     end
 
   end # class timetable
 
-  def tt_generator(pin, idx)
-    idx = idxcheck(idx)
-    if idx==-1
-      print('Wrong index, must be ', IDXS)
+  def instance_generator(pin, idx)
+    do
+      import path
+      if path.exists(ttdir) && !path.isdir(ttdir)
+        print('Fatal error : ', ttdir, 'is not a directory, remove it first')
+        return
+      end
+      if !path.isdir(ttdir)
+        path.mkdir(ttdir)
+      end
+    end
+    if idx==nil
+      idx=''
+    elif type(idx)!='int'
+      print('Need an index')
       return
     end
+    idx=str(idx)
     if global.('tt'+idx) != nil
       print('global var', 'tt'+idx, 'is used')
       return
@@ -443,101 +582,28 @@ def ttable_combo()
       return
     end
     print('Creating timetable :', 'tt'+idx)
+    # Created the 'tt' or 'tt2' etc instance
     global.('tt'+idx) = Timetable(pin , idx)
-  end # tt_generator
-
-  import webserver
-
-  def webpage_show(idx)
-      if !webserver.check_privileged_access() return nil end
-      var t = global.('tt'+idx)
-      webserver.content_start("Timetable Settings") # title of the web page
-      webserver.content_send_style() # standard Tasmota style
-      if webserver.arg_size()==3
-          var timetable = webserver.arg(0)
-          var duration = webserver.arg(1)
-          var active_days = webserver.arg(2)
-          t.set_active_days(active_days)
-          t.set_duration(duration)
-          t.set_timetable(timetable)
-          webserver.content_send('<br<br>The settings are stored<br><br>')
-      end
-      webserver.content_send('<form action="/tt" id="ttform">')
-      webserver.content_send('<label for="tt">Timetable' .. t.idx ..' :</label>')
-      webserver.content_send('<input type="text" id="tt" name="tt" value="'+t.timetable+'"><br><br>')
-      webserver.content_send('<label for="dur">Bell duration: (5 or 4.5 etc)</label><input type="text" id="dur" name="dur" value="' .. t.duration .. '"><br><br>')
-      webserver.content_send('<label for="ad">Active Days(1-5 means MON-FRI)</label><input type="text" id="ad" name="ad" value="' .. t.active_days .. '"><br><br>')
-      webserver.content_send('</form>')
-      webserver.content_send('<button type="submit" form="ttform">Save settings</button>')
-      webserver.content_button(webserver.BUTTON_MAIN)
-      webserver.content_stop()
-  end
-
-  class TimetableWeb
-      var idx
-
-      def init(idx)
-          self.idx = idx
-          if global.('tt'+self.idx)==nil
-            print('Error : timetable tt'+self.idx, 'not found')
-            return
-          end
-          tasmota.add_driver(self)
-          if tasmota.wifi('up')
-            self.web_add_handler()
-          end
-      end
-
-      def web_add_main_button()
-          webserver.content_send('<button onclick="location.href=\'/tt\'">Timetable</button>')
-      end
-
-      def web_add_handler()
-        webserver.on('/tt'+self.idx, /-> webpage_show(self.idx))
-        print('Created web page for tt'+self.idx)
-      end
-
-      def disable()
-          webserver.on('/tt'+self.idx, / -> nil)
-          tasmota.remove_driver(self)
-      end
-
-      def deinit()
-          print(self, 'deinit()')
-      end
-  end
-
-  def web_generator(idx)
-    idx = idxcheck(idx)
-    if idx==-1 print('Wrong index, must be ', IDXS) return end
-    if global.('tt'+idx) == nil print('Timetable is missing, not creating web') return end
-    if global.('ttweb'+idx) != nil print('ttweb'+idx,'already exists, not creating web') return end
-    global.('ttweb'+idx) = TimetableWeb(idx)
-  end
-
-  for idx:IDXS
-    if global.('TTPIN'+idx) != nil
-      tt_generator(global.('TTPIN'+idx), idx)
-      web_generator(idx)
-    end
-  end
-
-  #def startweb()
-  #  for idx:IDXS
-  #    if global.('TTPIN'+idx) != nil
-  #      web_generator(idx)
-  #    end
-  #  end
-  #end
-  # 'System#Boot' fails when MQTT connection fails
-  # 'Wifi#Connected' is not working instantly, it is too early
-  #tasmota.add_rule('Wifi#Connected', /-> tasmota.set_timer(1000, startweb) )
-
+    #return global.('tt'+idx)
+  end # instance_generator
+  global.timetable = instance_generator
 end # ttable_combo()
 
+# creates the "timetable" global function
 ttable_combo()
 # Ensures we cannot call ttable_combo() again
 ttable_combo = nil
-print('GC=',tasmota.gc())
+# Now we have no access to ttable_combo() and we can only call
+# [global.]timetable(GPIO_PIN [, idx])
 
 # 08:10 08:55 09:00 09:45 09:55 10:40 10:50 11:35 11:45 12:30 12:40 13:25 13:30 14:10
+
+# GPIO-1 is connected with the Relay. Classic bells are inductive loads and MAY be
+# an option to use an ~220V SSR (these are TRIAC based as far as I know)
+# the second argument is the name of the timetable and if nil,
+# it gets the "topic" from the tasmota module
+
+# This declaration should be in autoexec.be, but for development allows fast reload
+if global.('BELL_PIN')!=nil
+  global.timetable(BELL_PIN)
+end

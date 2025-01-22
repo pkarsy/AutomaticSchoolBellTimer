@@ -45,22 +45,26 @@ Selection of tools: Hardware, software
 - SSR (solid state relay) Or a Relay breakout module. I personally use SSR. TODO own section WARNING SSR cannot completely isolate the circuit and allows for a few mA to leak even when inactive.
 - A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone. Also you will need a data cable, USB-C or micro-USB depending on the ESP32 board.
 
-## ESP Board selection
-If you want to avoid soldering the headers, choose a board with presoldered headers. Avoid boards without a serial chip, the web installer has trouble detecting the board on reset, and configuring wifi. This can change in the future but stay safe.
+## Hardware recommendations
 
-Warning there is a muriad of boards and board modifications based on ESP32, so you can easily get confused. Instead of the following specific boards I suggest to fulfil theese recommendations
-- ESP32 ESP32-C3 chip (WARNING NO ESP8266)
-- Dedicated serial chip. It is located near the USB connector and usually the specification mentions it. All ESP32 boards have dedicated serial chip
+There is a muriad of boards and board modifications based on ESP32, so you can easily get confused. I recommend to choose a board with the following characteristics.
+
+- ESP32 or ESP32-C3 based board
+
+- Dedicated serial chip. It is located near the USB connector and usually the specification mentions it. All ESP32 boards have dedicated serial chip. The manufacturers try to omit it to reduce the cost, but the difference to the customer is a few cents. On boards without a serial chip, the web installer has trouble detecting the board on reset, and configuring wifi. This can change in the future but stay safe.
+The web installer is used at the installation phase, **but MOST IMPORTANTLY many years later when for some reason the WIFI is lost or changed**
+
 - At least 2 GND pins. Even more if you want to have an Indicator LED. Otherwise wiring is needed. (Dont forget, we target simplicity and reliability)
-- Presolodered headers is a bonus.
 
-The following boards are tested.
+- Presoldered headers is a bonus.
 
-- ESP32 DevKit works very well. Usually presoldered Headers
-- ESP32 wemos lolin32. Do not use a lipo battery, otherwise works very well.
+Better use the previous recommendations but if you are curious, the following boards are tested.
+
+- ESP32 DevKit works very well.
+- ESP32 wemos lolin32. Do not use a lipo battery, otherwise works well.
 - ESP32 with Lipo Battery Charger(lolin32 lite I believe). Not very well suited for this project. Do not plug a battery. It has only one GND pin.
-- ESP32-C3-32S NodeMCU works very well. Usually presoldered headers
-- ESP32-C3 Core. The "standard" version with LUATOS.COM logo works very well.
+- ESP32-C3-32S NodeMCU works very well
+- ESP32-C3 Core. The "standard" version with LUATOS.COM logo works very well
 - ESP32-C3 Core  The "simple" version (no Serial chip, no luatos.com logo). Difficulties at installation and wifi configuration.
 - ESP32-S2 Wemos. Very limited testing. No serial chip, difficulties at installation and wifi configuration.
 

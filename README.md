@@ -1,12 +1,13 @@
 # timetable
-Control a school bell
+Automatic school bell timer based on the popular ESP32x series and Tasmota.
 
-WARNING WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND AT YOUR OWN RISK.
-If you are unsure ask a licenced tecnician for the mains connection.
 
-PHOTO
+# WARNING
+Most electromechanical school bells use mains voltage (230/110V) Anthrough the project can be assembled without the need to be exposed to such a voltage. However when installing to the final location a connection has to be made to the bell. So,
+WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND AT YOUR OWN RISK.
+If you are unsure ask a licenced tecnician to do the mains connection.
 
-Automatic school bell timer based on ESP32x Tasmota.
+PHOTO TODO
 
 ## Problems with existing solutions
 Although there are many options for the automation of a school bell, very few of them are particularly good.
@@ -23,12 +24,12 @@ Although there are many options for the automation of a school bell, very few of
 
 ## Design Goals
 
-- Very low cost of the hardware.
 - Very accurate, using NTP(Network Time Protocol).
-- Automatically shiching daylight time, twice a year.
-- Resistand to Network disconnections and power outages. The module keeps accurate time on such occations, and only rarely needs to connect to the Internet to fix the time drift(less than 1 sec per week without Internet) We use a dedicated DS3231 module(with a lithium coin cell) for this. In the unlikely event of no network availability (at all) there is a dedicated section below.
-- Simple and intuitive Web Control Panel. Easily controllable via PC or mobile. With the option of MQTT, it can also be controlled outside of the local network.
-- as few parts as possible (and no soldering at all, if the ESP has presoldered headers).
+- Time Zone and Daylight Savings Time
+- Resistant to Network disconnections and power outages. The module keeps accurate time on such occations, and only rarely needs to connect to the Internet to fix the time drift(less than 1 sec per week without Internet) We use a dedicated DS3231 module(with a lithium coin cell) for this. In the unlikely event of no network availability (at all) there is a dedicated section below.
+- Simple Web Control Panel. Easily controllable via PC or mobile. With the option of MQTT, it can also be controlled outside of the local network.
+- Very low cost of the hardware.
+- as few parts as possible, and no soldering at all, if the ESP has presoldered headers.
 - Reliable hardware. It is expected to work for years and years mostly anattended. The minimal part count and the airtight enclosure is hepling on this.
 - Reliable software. Minimal dependencies on external services. For example there is no dependency for an MQTT server, whom we dont now if it is working or even exists 10 years from now. If you want it of course is working and can be useful for remote control and debugging (see the dedicated section).
 - Free software. Both tasmota and timetable are open source with very permissive licences.
@@ -47,11 +48,10 @@ Tasmota solves for us some very important aspects of the project.
 # ESP board recommendations
 There is a muriad of boards and board modifications based on ESP32, so you can easily get confused.
 
-Some recommended boards are :
+Some recommended boards that i have tested are :
 - ESP32 DevKit
-- ESP32 lolin32 (Not Lite) but do not connect a lipo battery
 - ESP32-C3-32S NodeMCU
-- ESP32-C3 Core. The "standard" version with LUATOS.COM and serial chip.
+- ESP32-C3 Core. The "standard" version (has a LUATOS.COM logo). I personally use them because it is very easy to connect the DS3231 chip, but you have to solder the headers.
 
 Generally all ESP32 and ESP32-C3 boards with a dedicated serial chip and at least 2-3 GND pins are recommended. Avoid ultra tiny versions (suffer from lack of IO and GND pins). Presoldered headers is a bonus.
 
@@ -59,9 +59,9 @@ Some boards which are less than ideal/unsuitable for this specific project
 
 - ESP32 with Lipo Battery Charger(lolin32 lite I believe). It has only one GND pin.
 . ESP32-S2 boards I have checked do not have a serial chip.
-- ESP32-C3 Core, the "simple" version (no luatos.com logo), no Serial chip
+- ESP32-C3 Core, the "simple" version (no luatos.com logo), no Serial chip.
 - **ESP8266 will NOT work.** It does not support the Berry scripting language.
-I insist on
+
 **First we will install all necessary software to the ESP board we will test that the automatic timer is working, then we will continue with the hardware assembly**
 
 ## Tasmota installation.
@@ -80,7 +80,7 @@ Copy the necessary line and execute it in Tools->Console.
 - You can add a muriad of additional options, mqtt server, MDNS if they are useful to you, but for the project the above are enough. There is a dedicated section for some useful Tasmota tweakings.
 
 ## Berry script application ("timetable.be")
-Go to tools -> berry scripting console
+WebBrowser -> IP address -> tools -> berry scripting console
 paste and run the following code
 
 ```berry
@@ -110,7 +110,7 @@ restart the module
 Go with the browser to the same IP address as previously. You will see a timetable button, for testing you can choose a time one or 2 minutes later.
 
 
-## DS3231 real time clock. Optional but recommended
+## Connecting the DS3231 real time clock to the board. Optional but recommended
 Here is the link
 You can probably skip this and most of the time the bell will work perfectly. However there are scanarios which the clock can trully save your day. Example is a short power outage followed by network instability. Or a WIFI password change without updating the tasmota system. With the RTC, the module will continue to work for a long time, until we fix the problem
 

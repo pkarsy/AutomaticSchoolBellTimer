@@ -453,7 +453,12 @@ def ttable_combo()
       var t = global.('tt'+idx)
       webserver.content_start("Timetable Settings") # title of the web page
       webserver.content_send_style() # standard Tasmota style
-      if webserver.arg_size()==3
+      if webserver.arg_size()==1
+        print('arg0=',webserver.arg(0))
+        if webserver.arg(0)=='1'
+          t.bell_on()
+        end
+      elif webserver.arg_size()==3
           var timetable = webserver.arg(0)
           var duration = webserver.arg(1)
           var active_days = webserver.arg(2)
@@ -462,6 +467,9 @@ def ttable_combo()
           t.set_timetable(timetable)
           webserver.content_send('<br<br>The settings are stored<br><br>')
       end
+      #<button onclick="location.href='/tt?bell=1'" name="">Timetable</button>
+      #webserver.content_send('<form action="/tt" id="save"></form>')
+      webserver.content_send('<button onclick="location.href=\'/tt?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
       webserver.content_send('<form action="/tt" id="ttform">')
       webserver.content_send('<label for="tt">Timetable' .. t.idx ..' :</label>')
       webserver.content_send('<input type="text" id="tt" name="tt" value="'+t.timetable+'"><br><br>')
@@ -510,7 +518,7 @@ def ttable_combo()
   def web_generator(idx)
     idx = idxcheck(idx)
     if idx==-1 print('Wrong index, must be ', IDXS) return end
-    if global.('tt'+idx) == nil print('Timetable is missing, not creating web') return end
+    if global.('tt'+idx) == nil print('Timetable is missing, not creating web interface') return end
     if global.('ttweb'+idx) != nil print('ttweb'+idx,'already exists, not creating web') return end
     global.('ttweb'+idx) = TimetableWeb(idx)
   end

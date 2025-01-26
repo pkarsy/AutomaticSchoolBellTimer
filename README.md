@@ -25,7 +25,7 @@ PHOTO TODO
 - Time Zone and Daylight Savings Time
 - Resistant to Network disconnections and power outages. The module keeps accurate time on such occations, and only rarely needs to connect to the Internet to fix the time drift(less than 1 sec per week without Internet) We use a dedicated DS3231 module(backed by a lithium coin cell) for this.
 - Simple Web Control Panel, via PC or mobile. With the option of MQTT, it can also be monitored and controlled outside of the local network.
-- As few parts as possible, no PCB, and no soldering at all, if the ESP has presoldered headers.
+- As few parts as possible, no PCB, and no soldering at all (if we choose an ESP32 board with presoldered headers).
 - Reliable hardware. It is expected to work for years and years mostly anattended. The minimal part count and the airtight enclosure is hepling on this.
 - Reliable software. Minimal dependencies on external services. It can tolerate power outages and MONTHS of WIFI anavailability before the time drift becomes noticeable. The CR2032 coin cell will probably work for 10 years or even more, given that most of the time it will not discharge. There is no dependency for MQTT server, whom we dont now if it is working or even exists 10 years from now. If you want it of course is working and can be useful for remote control and debugging (see the dedicated section). If it stops working it will not break the functionality however.
 - Very low cost (See the BOM below)
@@ -51,18 +51,22 @@ Do not assemble anything yet, just connect the board with the USB cable to your 
 - Go to https://tasmota.github.io/install/
 The first option tasmota(english) is the safest option. Localized versions have limited hardware support(only ESP32 variants).
 - Choose the serial port enable "Erase Device" -> Next -> Install.
-- After the installation is complete Next -> Configure WIFI
-if the WIFI is not the same as the final location dont worry use the current WIFI for now.
-- When connected, click Visit Device. Write down the IP address. This is the web page of the tasmota system. There is no need for the serial connection anymore.
-Even if the Tasmota system is not connecting (AP chnge) or you dont have the IP, you can always connect the USB cable to the PC and return to the installation page https:tasmota . Then you and Change the WIFI settings (If for example you change the location and the AP of the device)
-- Change the TimeZone/Dayligtht settings. Go to
+- After the installation is complete Next -> Configure WIFI 
+Use the current WIFI for now. When we move the box to the final location we can easily change the AccessPoint.
+- When connected, click Visit Device. Write down the IP address. This is the web page of the tasmota system. From now on we are working via network. There is no need for the serial connection anymore.
+- Change the TimeZone/Dayligtht settings. In another tab go to
 https://tasmota.github.io/docs/Timezone-Table/
-Copy the necessary line and execute it in Tools->Console.
-- You can add a muriad of additional options, mqtt server, MDNS if they are useful to you, but for this project the above are enough. There is a dedicated section for some useful Tasmota tweakings.
+Copy the necessary line and execute it in Tools->Console.(NOT berry console)
+- Again in console (and dont forget the "backlog")
+```berry
+backlog hostname school; SetOption55 1; restart 1;
+```
+The module will restart. From now on you can type "school.local" in the browser address bar if you can't remember the IP.
+
 
 ## STEP 3. Berry script installation ("timetable.be")
-WebBrowser -> IP address -> tools -> berry scripting console
-paste and run the following code
+WebBrowser -> IP address(or school.local) -> tools -> berry scripting console
+paste the following code
 
 ```berry
 do
@@ -79,44 +83,50 @@ do
   print('Installed', fn)
 end
 ```
-You will hopefully got the timetable.be. Immediatelly
-```berry
-TTPIN = 12
-load('timetable.be')
-```
-Hopefully you will see the timetable starting successfully.
+Now you have the "timetable.be" script. 
 
-tools -> manage filesystem -> edit autoexec.be (the white icon with the pencil)
-append the 2 lines.
+Again in Berry Console type
+
+```berry
+# The GPIO pin connected with the SSR/Relay
+TTPIN = 12
+load('timetable.be')
+```
+Hopefully you will see the timetable starting successfully. To be started every time, it needs to be in "autoexec.be"
+
+tools -> manage filesystem -> edit autoexec.be (the white icon with the pencil). Create it if does not exist.
+
+Append the 2 lines.
 ```berry
 TTPIN = 12
 load('timetable.be')
 ```
-We use GPIO12 for driving the RELAY/SSR but you can choose any free pin to connect to the Relay/SSR. You can connect a LED to the pin(and GND) , or maybe the SSR, or you can temporarily/or permanently choose the buildin LED so you can see results before connecting anything to the board.
+You can choose any free pin to connect to the Relay/SSR. You can connect temporarily a LED to this pin , or maybe the SSR itself (usually they have a LED), or you can choose the buildin LED so you can see results before connecting anything to the board.
 
 restart the module
 
-Go with the browser to the same IP address as previously. Hopefully you will see a timetable button, for testing you can choose a time very close to the current time. When testing choose * or 1-7 for active days. When on school most probably the setting will be 1-5 (Monday-Friday). At this point the control machinery is ready !
+Go with the browser to the same IP address(or school.local) as previously. You will see a timetable button, for testing you can choose a time very close to the current time. When testing choose * (=ALL) for active days. On school most probably the setting will be 1-5 (Monday-Friday).
 
 ## STEP 3.5 protect the web interface from anauthorized access
-There are 2 ways. Use both of them if you prefer.
+Here are 2 solutions. Use both of them if you prefer.
 - Set a password to access the page TODO
-- Automatically disable the webserver 5min after powerup. TODO
+- Automatically disable the webserver 5min after powerup. Not very secure, but has the huge advantage of not having another password to remember, and this project is about reliability and maintainability. You can add a note on the back of the box (see section recovery from AP changes)
 
-## STEP 4. Connecting the DS3231 real time clock to the board. Not a hard requirement but certainly recommended
-Without a real time clock it is easy for the module to loose the time. Example is a power outage(The ESP lose the time) combined with network anavaibility(The power outage affects the network equipment). Or a WIFI password change without updating the tasmota system. With the RTC, the module will continue to work for a long time, until we fix the problem.
-link
-For this specific project DS3231 board does not need the diode removal as we speak for a 3.3V system. Be sure to install a new and good quality CR2032 cell.
+## STEP 4. Connecting the DS3231 real time clock to the board. Not a hard requirement but certainly recommended.
+Without a real time clock it is easy for the module to loose the time. Example is a power outage, combined with internet anavailability(The power outage affects the network equipment). Or a WIFI password change. With the RTC, the module will continue to work for a long time, until we fix the problem.
 
-## STEP 6 Collectin the rest of the hardware. Hardware
+https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231
+
+## STEP 6 Collecting the rest of the hardware.
 PHOTO-TODO
 - A project enclosure, better to be air tight, to prevent moisture and dust. 
 - Esp32x board + DS3231 + USB cable (from the previous steps). DO NOT USE A 2 CHARGING ONLY CABLE. You will not have any means to recovery the system from WIFI changes.
 - A few jumper cables (Warning Unused)
 - SSR (solid state relay) Or a Relay breakout module. I personally use an SSR. TODO own section WARNING SSR cannot completely break the circuit and allows for a few mA to leak even when inactive.
 - A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone.
-- A connector for the bell connection
+- A connector for the bell connection.
 - ON/OFF button
+- Optionally an indicator LED. You can bye them ready with cables and resistor, or solder one yourself.
 
 ## STEP 7 Assembling the circuit
 the ESP32 is already connected with the DS3231
@@ -135,6 +145,11 @@ This is trivial but find a suidable walll socket for the usb charger.
 ## STEP 10. Reconfigure the timer to connect to the WIFI of the school.
 Plug the USB cable to you laptop and go to the tasmota installation page https TODO
 -> Configure WIFI(set the new  credentials) -> select you new Access Point -> Visit Device. If you can see the Tasmota page with the timetable the network is configured correctly. Unlug the cable from the laptop and use the USB charger. Congratulations !
+
+## STEP 11. Learn how to recover from a missing/changed Access Point.
+You will probably want to write this to some accessible place, or to the back of the box.
+Connect the USB cable, open your (chrome based) browser type "tasmota installer" and click on the installer page. Push the cpnnect button and then setup WIFI.
+The same method can be used if the module is connected to the WIFI but you cant find the IP address and the "school.local" is not working.
 
 Optional stuff some of them may be of interest to you.
 

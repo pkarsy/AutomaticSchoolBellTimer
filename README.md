@@ -80,6 +80,7 @@ We have to connect the SSR/RELAY. Any free PIN is OK, in this document we will u
 TODO Photo
 
 WebBrowser → IP address(or school.local) → tools → Berry scripting console
+
 paste the following code
 TODO use timetable.be
 
@@ -123,7 +124,7 @@ restart the module
 Go with the browser to the same IP address(or school.local) as previously. You will see a timetable button, for testing you can choose a time very close to the current time. When testing choose * (=ALL) for active days. On school most probably the setting will be 1-5 (Monday-Friday).
 
 ## STEP 4. Connecting the DS3231 real time clock to the board. Highly recommended.
-Without a real time clock it is easy for the module to loose the time. Example is a power outage, combined with internet anavailability(The power outage affects the network equipment). Or a WIFI password change. With the RTC, the module will continue to work for a long time, until we fix the problem. Full instrctions on:
+Without a real time clock it is easy for the module to loose the time. Example is a power outage, followed by Internet disconnection. (The power outage affects the network equipment). Or a WIFI password change (Without updating our project). With the RTC, the module will continue to work for a long time, until we fix the problem. Full instrctions on:
 
 https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231
 

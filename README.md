@@ -8,8 +8,6 @@ Most electromechanical school bells use mains voltage (230/110V). The project ca
 **WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** In some coutries It may even be illegal to to it yourself.
 If you are unsure ask a licenced tecnician to do the mains connection.
 
-
-
 ## Problems with existing solutions
 - Very limited number of timers usually smaller than a 14-20 a school needs.
 - Hard to use control panel.
@@ -24,7 +22,7 @@ If you are unsure ask a licenced tecnician to do the mains connection.
 ## Design Goals
 - Very accurate, using NTP(Network Time Protocol).
 - Time Zone and Daylight Savings Time
-- Resistant to Network disconnections and power outages. The module keeps accurate time on such occations, and only rarely needs to connect to the Internet to fix the time drift(less than 1 sec per week without Internet) We use a dedicated DS3231 module(backed by a lithium coin cell) for this.
+- Resistant to Network disconnections and power outages. The module keeps accurate time on such occasions, and only rarely needs to connect to the Internet to fix the time drift(less than 1 sec per week without Internet) We use a dedicated DS3231 module(backed by a lithium coin cell) for this.
 - Simple Web Control Panel, via PC or mobile. With the option of MQTT, it can also be monitored and controlled outside of the local network.
 - As few parts as possible, no PCB, and no soldering at all (if we choose an ESP32 board with presoldered headers).
 - Reliable hardware. It is expected to work for years and years mostly anattended. The minimal part count and the airtight enclosure is hepling on this.
@@ -45,7 +43,7 @@ PHOTO
 We aware
 - **ESP8266 will NOT work.** It does not support the Berry scripting language.
 
-**First we will install all necessary software to the ESP board, then we will continue with the hardware assembly**
+**First we will install all necessary software to the ESP board, test the functionality and only then, we will continue with the hardware assembly**
 
 ## STEP 2. Tasmota installation & configuration.
 This is a very short and limited installation guide, the tasmota home page contains instructions to solve all shorts of problems.
@@ -58,10 +56,9 @@ The first option tasmota(english) is the safest option. Localized versions have 
 
   Use the current WIFI for now. When we move the box to the final location we can easily change the AccessPoint.
 - When connected, click Visit Device.
-  
   Write down the IP address. This is the web page of the tasmota system. From now on we are working via network. There is no need for the serial connection anymore.
-- Set the TimeZone/Dayligtht settings.
 
+- Set the TimeZone/Dayligtht settings.
   In another tab go to
   https://tasmota.github.io/docs/Timezone-Table/
   
@@ -79,6 +76,7 @@ The first option tasmota(english) is the safest option. Localized versions have 
 
 ## STEP 3. Berry script installation ("timetable.be")
 We have to connect the SSR/RELAY. Any free PIN is OK, in this document we will use the 12 TODO_WITH SSR
+
 TODO Photo
 
 WebBrowser -> IP address(or school.local) -> tools -> Berry scripting console

@@ -51,8 +51,8 @@ Do not assemble anything yet, just connect the board with the USB cable to your 
 
 - Go to https://tasmota.github.io/install/
 The first option tasmota(english) is the safest option. Localized versions have limited hardware support(only ESP32 variants).
-- Choose the serial port enable "Erase Device" -> Next -> Install.
-- After the installation is complete Next -> Configure WIFI.
+- Choose the serial port enable "Erase Device" → Next → Install.
+- After the installation is complete Next → Configure WIFI.
 
   Use the current WIFI for now. When we move the box to the final location we can easily change the AccessPoint.
 - When connected, click Visit Device.
@@ -62,13 +62,13 @@ The first option tasmota(english) is the safest option. Localized versions have 
   In another tab go to
   https://tasmota.github.io/docs/Timezone-Table/
   
-  Copy the necessary line and execute it in Tools->Console.(NOT berry console)
+  Copy the necessary line and execute it in Tools → Console.(NOT berry console)
 
 - Again in console (and dont forget the "backlog")
   ```berry
   backlog hostname school; SetOption55 1; restart 1;
   ```
-  After restart, you will see something like
+  On boot messages, you will see something like
   ```
   mDN: Initialized 'school.local'
   ```
@@ -79,7 +79,7 @@ We have to connect the SSR/RELAY. Any free PIN is OK, in this document we will u
 
 TODO Photo
 
-WebBrowser -> IP address(or school.local) -> tools -> Berry scripting console
+WebBrowser → IP address(or school.local) → tools → Berry scripting console
 paste the following code
 TODO use timetable.be
 
@@ -110,7 +110,7 @@ load('timetable.be')
 
 You will see the timetable starting successfully. To be started on boot, it needs to be in "autoexec.be"
 
-tools -> manage filesystem -> edit autoexec.be (the white icon with the pencil). Or create it if does not exist.
+tools → manage filesystem → edit autoexec.be (the white icon with the pencil). Or create it if does not exist.
 
 Append the 2 lines.
 ```berry
@@ -150,7 +150,7 @@ TODO photo
 ## STEP 3.5 protect the web interface from anauthorized access
 
 Here are 2 solutions. Use both of them if you prefer.
-- Set a password to access the page. school.local(or IP) -> Configuration -> Other -> Web Admin Password (Login with "admin"/"password"). The page is not encrypted so not very secure, but it is on LAN only so I guess is OK.
+- Set a password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Login with "admin"/"password"). The page is not encrypted so not very secure, but it is on LAN only so I guess is OK.
 
 - Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but has the huge advantage of not having another password to remember (after 10 years), and this project is about reliability and maintainability. You can add a note on the back of the box (see section recovery from AP changes)
 Paste this long line to the Tasmota Console:
@@ -169,7 +169,7 @@ This is trivial but find a wall electrical socket for the usb charger **DEDICATE
 
 ## STEP 10. Reconfigure WIFI
 **Plug the USB cable to you laptop** (chromium based browse) and type "tasmota installation"
--> Configure WIFI(set the new  credentials) -> select the new Access Point + pass -> Visit Device. Unlug the cable from the laptop and use the USB charger.
+→ Configure WIFI(set the new  credentials) → select the new Access Point + pass → Visit Device. Unlug the cable from the laptop and use the USB charger.
 
 
 ## STEP 11. Document the previous to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point. This way even someone else can do it instead of you.
@@ -183,7 +183,7 @@ Congratulations !
 Optional stuff some of them may be of interest to you.
 
 ## Disable Device Recovery (Recommended)
-Go to Tools->Console
+Go to Tools → Console
 ```
 backlog SetOption65 1; restart 1;
 ```

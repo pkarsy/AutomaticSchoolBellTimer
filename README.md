@@ -222,13 +222,13 @@ Congratulations !
 
 Optional stuff some of them may be of interest to you.
 
-## How to power OFF the module
+### How to power OFF the module
 Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the SSR or Relay.
 
-## How to disable the bell by software.
+### How to disable the bell by software.
 DONT DO IT. the idea for this Timer is to be used by any person/teacher in the school. Use the ON/OFF button for this task. If you really insist on doing this by software set the duration to 0. But then the ON/OFF button will do nothing and probably the timer seems to be broken.
 
-## More than 1 timetable/bells
+### More than 1 timetable/bells
 in autoexec.be we can
 
 TTPIN2 = 12 # Can be the same or different pin
@@ -237,7 +237,7 @@ The second timetable can be for example on some special classes on friday aftern
 If you need to ring a diiferent bell you have to install a second SSR. TTPIN2 must be set accordingly.<br>
 TTPIN3 TTPIN4 also work.
 
-## Optional indicator LED
+### Optional indicator LED
 You need something like this
 
 TODO photo
@@ -248,14 +248,14 @@ Configure
 LED+ ledlin (i)nverted
 LED- Output Low(=low power GND)
 
-## Disable Device Recovery (Recommended)
+### Disable Device Recovery (Recommended)
 Go to Tools → Console
 ```
 backlog SetOption65 1; restart 1;
 ```
 Device Recovery may be useful when we are playing with tasmota, but not on a working device.
 
-## MQTT server, optional but useful for debugging or remote control
+### MQTT server, optional but useful for debugging or remote control
 Altrough you can self host your MQTT server, there are a lot of online MQTT servers free and paid and probably you prefer this for simplicity. Examples are:
 - hivemqtt.com
 - flespi.com
@@ -287,16 +287,16 @@ backlog
 
 There are a lot of mqtt GUI apps on mobile(and Web) allowing to automate theese commands with buttons if you need this, but I think is overkill, given how rarelly you need to change the settings
 
-## Do I need to update the tasmota system ?
+### Do I need to update the tasmota system ?
 Probably not. If it is working, dont fix it. The same applies for the berry script.
 
-## Why not using the buildin tasmota timers
+### Why not using the buildin tasmota timers
 They are not very convenient for this specific application. Also there are cases ( schools with day+afternoon timetable) where the available timers are not enough. The "timetable.be" script offers an unlimited number of timers and a relatively easy to use web interface.
 
-## 5Ghz wifi. Currrently not working
+### 5Ghz wifi. Currrently not working
 At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time. When the Tasmota system supports 5GHz, for example ESP32-C6, I guess it will be trivial to use the new chip, and if I can, I will try to update this page.
 
-# Using Tasmota instead of an embeded programming language (Arduino, micropython circuitpyton, lua or even ESP-IDF)
+### Using Tasmota instead of an embeded programming language (Arduino, micropython circuitpyton, lua or even ESP-IDF)
 Tasmota solves for us some very important aspects of the project. Implementing all theese features in bare metal will be very difficult and time consuming.
 
 - Network connectivity (this includes WIFI autoconnect, optionally MQTT client autoconnect)

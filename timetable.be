@@ -465,16 +465,23 @@ def ttable_combo()
           t.set_active_days(active_days)
           t.set_duration(duration)
           t.set_timetable(timetable)
-          webserver.content_send('<br<br>The settings are stored<br><br>')
+          webserver.content_send('<p style="text-align:center">The settings are stored</p>')
       end
       #<button onclick="location.href='/tt?bell=1'" name="">Timetable</button>
-      #webserver.content_send('<form action="/tt" id="save"></form>')
-      webserver.content_send('<button onclick="location.href=\'/tt?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
+      webserver.content_send('<p style="text-align:center">')
+      if global.ds3231 != nil && ds3231.active()
+        #webserver.content_send('<br>DS3231 is installed<br>')
+        webserver.content_send('DS3231 is installed</p>')
+      else
+        webserver.content_send('DS3231 is NOT installed</p>')
+      end
+      #webserver.content_send('')
+      webserver.content_send('<br><button onclick="location.href=\'/tt?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
       webserver.content_send('<form action="/tt" id="ttform">')
-      webserver.content_send('<label for="tt">Timetable' .. t.idx ..' :</label>')
+      webserver.content_send('<label for="tt">Timetable' .. t.idx ..' (24h format, can be ie 08:50 or 0850) :</label>')
       webserver.content_send('<input type="text" id="tt" name="tt" value="'+t.timetable+'"><br><br>')
-      webserver.content_send('<label for="dur">Bell duration: (5 or 4.5 etc)</label><input type="text" id="dur" name="dur" value="' .. t.duration .. '"><br><br>')
-      webserver.content_send('<label for="ad">Active Days(1-5 means MON-FRI)</label><input type="text" id="ad" name="ad" value="' .. t.active_days .. '"><br><br>')
+      webserver.content_send('<label for="dur">Bell duration: (5 or 4.5 etc seconds)</label><input type="text" id="dur" name="dur" value="' .. t.duration .. '"><br><br>')
+      webserver.content_send('<label for="ad">Active Days (1-5 means MON-FRI, * means all days)</label><input type="text" id="ad" name="ad" value="' .. t.active_days .. '"><br><br>')
       webserver.content_send('</form>')
       webserver.content_send('<button type="submit" form="ttform">Save settings</button>')
       webserver.content_button(webserver.BUTTON_MAIN)
@@ -530,22 +537,8 @@ def ttable_combo()
     end
   end
 
-  #def startweb()
-  #  for idx:IDXS
-  #    if global.('TTPIN'+idx) != nil
-  #      web_generator(idx)
-  #    end
-  #  end
-  #end
-  # 'System#Boot' fails when MQTT connection fails
-  # 'Wifi#Connected' is not working instantly, it is too early
-  #tasmota.add_rule('Wifi#Connected', /-> tasmota.set_timer(1000, startweb) )
-
 end # ttable_combo()
 
 ttable_combo()
 # Ensures we cannot call ttable_combo() again
 ttable_combo = nil
-print('GC=',tasmota.gc())
-
-# 08:10 08:55 09:00 09:45 09:55 10:40 10:50 11:35 11:45 12:30 12:40 13:25 13:30 14:10

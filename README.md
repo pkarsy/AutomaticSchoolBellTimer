@@ -59,6 +59,25 @@ Needs a +5V a GPIO and a GND(not a GPIO)
 
 PHOTO TODO devkit-SSR lolin32-SSR devkit-Relay
 
+old step Relay/SSR selection
+Most general purpose timers i have seen use electromechanical relays. For this project you might for example use this one
+
+TODO photo
+
+They work for AC and DC and and A wide range of voltages. They might have problems with inductive loads (electromechanical bells are inductive and apart from real noice produce a lot of electrical noice also !) Probably the quality(contact materials) of the relay plays an importand role here, but this is something I cannot discuss, I dont have the expertice nor the tools to test them.
+
+The other option is to use a Solid State Relay (SSR). They have some adavntages and disadvantages over the electromechanical Relays :
+- They work on specific conditions ususally only AC or only DC, and specific votages.
+As we are probably speak about mains voltage. You need a ~230V AC SSR like this one
+- Generally not well suited for inductive loads. I imagine not all relays are the same, but it is not very easy to know for sure.
+
+TODO PHOTO
+
+- They do not need power(+5V) only GND+A GPIO PIN
+- If they used inside specifications they can have a very long life.
+- Triac based AC solid relays are very well suited for inductive loads.
+- Cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check if this tiny mA leak has some safety implications, altrough it is very small to pose a threat.
+
 **First we will install all necessary software to the ESP board, test the functionality and only then, we will continue with the hardware assembly**
 
 ## STEP 3. Tasmota installation & configuration.
@@ -99,7 +118,9 @@ The first option tasmota(english) is the safest option. Localized versions have 
   From now on you can type "school.local" in the browser address instead of the IP. This is not very reliable unfortunatelly, keep also the IP.
 
 ## STEP 4. Berry script installation ("timetable.be")
-We have to connect the SSR/RELAY to the board. Any free PIN is OK, in this document we will use the 12 TODO_WITH SSR
+Do not forget that the SSR or the Relay breeakout is already connected to the ESP.
+Do not connect the RELAY/SSR output to anything yet !!!!!!!!!!!!
+Both have a LED so we can visually check
 
 TODO Photo
 
@@ -151,25 +172,6 @@ Go with the browser to the same IP address(or school.local) as previously. You w
 Without a real time clock it is easy for the module to lose the time. Example is a power outage, followed by Internet disconnection (The power outage affects the network equipment). Or a WIFI password change (Without updating our project). With the RTC, the module will continue to work for a long time, until we fix the problem. Full instrctions on:
 
 https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231
-
-## STEP 6. Relay/SSR selection
-Most general purpose timers i have seen use electromechanical relays. For this project you might for example use this one
-
-TODO photo
-
-They work for AC and DC and and A wide range of voltages. They might have problems with inductive loads (electromechanical bells are inductive and apart from real noice produce a lot of electrical noice also !) Probably the quality(contact materials) of the relay plays an importand role here, but this is something I cannot discuss, I dont have the expertice nor the tools to test them.
-
-The other option is to use a Solid State Relay (SSR). They have some adavntages and disadvantages over the electromechanical Relays :
-- They work on specific conditions ususally only AC or only DC, and specific votages.
-As we are probably speak about mains voltage. You need a ~230V AC SSR like this one
-- Generally not well suited for inductive loads. I imagine not all relays are the same, but it is not very easy to know for sure.
-
-TODO PHOTO
-
-- They do not need power(+5V) only GND+A GPIO PIN
-- If they used inside specifications they can have a very long life.
-- Triac based AC solid relays are very well suited for inductive loads.
-- Cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check if this tiny mA leak has some safety implications, altrough it is very small to pose a threat.
 
 ## STEP 7. Collecting the rest of the hardware.
 PHOTO-TODO

@@ -9,7 +9,7 @@ Most electromechanical school bells use mains voltage (230/110V). The project ca
 **WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** Ask a licenced tecnician to do the mains connection.
 
 ## Problems with existing solutions
-- Very limited number of timers usually smaller than the 14-20 a school needs.
+- Very limited number of timers, usually smaller than the 14-20 a school needs.
 - Hard to use control panel.
 - Severe time drift. This basically means constant maintenance and/or that the bell never rings at the expected time. A few minutes/even seconds error does not seem to be a problem at first glance, but the real problem is the argument with the students that the time is passed that they are gonna loose the bus etc.
 - Not capable of switching to Daylight savings time. Even WIFI plugs have problems on this.
@@ -46,64 +46,58 @@ We aware
 - **ESP8266 will NOT work.** It does not support the Berry scripting language.
 
 ## Step 2. Choose the Relay / SSR
-Note that I have tested the project only with SSR, however it should work OK with a Relay 5V breakout (not a naked relay which needs a proper circuit and a PCB)
+Note that I have (for years) tested the project only with SSR, however it should work OK with a Relay 5V breakout (which contains all circuitry a relay needs to work)
+
+**SSR**
 
 ![SSR](FOTEK-SSR-25DA.jpg)
 
-The SSR needs only a GPIO and a GND(Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
+- They work on specific conditions ususally only AC or only DC, and specific votages.
+As we are probably speak about mains voltage. You need a ~230V AC SSR.
+
+- They not need only a GPIO pin and a GND (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
+- They can have a very long life.
+- Triac based AC solid relays(most AC models) are very well suited for inductive loads.
+- They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check the manual if this tiny mA leak has some safety implications.
+ 
 Relay breakout Photo TODO
 
 ![Relay Breakout](Relay-Breakout-Module-5V.jpg)
 
-Needs a +5V a GPIO and a GND(not a GPIO)
 
 PHOTO TODO devkit-SSR lolin32-SSR devkit-Relay
 
-old step Relay/SSR selection
-Most general purpose timers i have seen use electromechanical relays. For this project you might for example use this one
-
-TODO photo
-
-They work for AC and DC and and A wide range of voltages. They might have problems with inductive loads (electromechanical bells are inductive and apart from real noice produce a lot of electrical noice also !) Probably the quality(contact materials) of the relay plays an importand role here, but this is something I cannot discuss, I dont have the expertice nor the tools to test them.
-
-The other option is to use a Solid State Relay (SSR). They have some adavntages and disadvantages over the electromechanical Relays :
-- They work on specific conditions ususally only AC or only DC, and specific votages.
-As we are probably speak about mains voltage. You need a ~230V AC SSR like this one
-- Generally not well suited for inductive loads. I imagine not all relays are the same, but it is not very easy to know for sure.
-
-TODO PHOTO
-
-- They do not need power(+5V) only GND+A GPIO PIN
-- If they used inside specifications they can have a very long life.
-- Triac based AC solid relays are very well suited for inductive loads.
-- Cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check if this tiny mA leak has some safety implications, altrough it is very small to pose a threat.
+- Needs a +5V a GPIO and a GND(not a GPIO)
+- They work for AC and DC and and A wide range of voltages.
+- Generally not well suited for inductive loads. (electromechanical bells are inductive)
+I imagine not all relays are the same, but this is a general rule.
 
 **First we will install all necessary software to the ESP board, test the functionality and only then, we will continue with the hardware assembly**
 
 ## STEP 3. Tasmota installation & configuration.
 This is a very short and limited installation guide, for more info go to the Tasmota installation page.
 
-Do not assemble anything yet, just connect the board with the USB cable to your computer. Tasmota supports a very convenient web based installer. You will need google chrome or chromium or similar browser. Linux users may get serial permission error, you have to add yourself to the "dialout" group. You may need to press the boot button when plugging the board to the computer.
+Do not assemble anything yet, just connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer. You will need google chrome or chromium or similar browser. You may need to press the boot button when plugging the board to the computer. Linux users may get serial permission error, you have to add yourself to the "dialout" group.
 
 - Go to https://tasmota.github.io/install/
 The first option tasmota(english) is the safest option. Localized versions have limited hardware support(only ESP32 variants).
 - Press the connect button → choose the serial port → check "Erase Device" → Next → Install
 - After the installation is complete press Next → Configure WIFI.
 
-  Use the current WIFI for now. When we move to the final location we can easily move to the new Access Point.
+  Use the current WIFI for now. When we move to the final location we can easily change the Access Point.
 
 - When connected, click Visit Device.
   Write down the IP address. This is the web page of the tasmota system. It is accessible only from the LAN.
   
-  From now on we are working via network. There is no need for the serial connection anymore.
+  From now on we are working via the browser. There is no need for the serial connection anymore.
 
 - Set the TimeZone/Dayligtht settings.
 
-  To do this, in another tab go to
+  To do this, in **another tab** go to
 
   https://tasmota.github.io/docs/Timezone-Table/
   
-  Copy the necessary line and execute it in Tools → Console.(NOT berry console)
+  Copy the necessary line and execute it in Tools → Console. (NOT berry console)
 
   You will see the time is changing automatically to your local time.
 
@@ -118,13 +112,13 @@ The first option tasmota(english) is the safest option. Localized versions have 
   From now on you can type "school.local" in the browser address instead of the IP. This is not very reliable unfortunatelly, keep also the IP.
 
 ## STEP 4. Berry script installation ("timetable.be")
-Do not forget that the SSR or the Relay breeakout is already connected to the ESP.
-Do not connect the RELAY/SSR output to anything yet !!!!!!!!!!!!
-Both have a LED so we can visually check
+Connect the SSR(or the Relay) to the ESP. We use the GPIO12 in this page but you can use any free GPIO.
+Do not connect the RELAY/SSR AC output to anything !!!!!!!!!!!!
+Relays and SSRs have a LED so we can visually check whether they activated without connecting them to AC.
 
 TODO Photo
 
-WebBrowser → IP address(or school.local) → tools → Berry scripting console
+WebBrowser → IP address (or school.local) → tools → Berry scripting console
 
 paste the following code
 TODO use timetable.be
@@ -147,7 +141,7 @@ end
 
 Now you have the "timetable.be" script installed.
 
-Without leaving the Berry Console type
+Without leaving the Berry Console type:
 
 ```berry
 TTPIN = 12
@@ -156,7 +150,7 @@ load('timetable.be')
 
 You will see the timetable starting successfully. To be started on boot, it needs to be in "autoexec.be"
 
-tools → Manage filesystem → edit autoexec.be (the white icon with the pencil). Or create it if does not exist.
+tools → Manage filesystem → edit "autoexec.be" (the white icon with the pencil). Or create it if does not exist.
 
 Append the 2 lines.
 ```berry
@@ -164,40 +158,40 @@ TTPIN = 12
 load('timetable.be')
 ```
 
-restart the module
+restart the module, and check the console messages.
 
 Go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top, for testing you can choose a time very close to the current time. When testing choose * (=ALL) for active days. On school, most probably the setting will be 1-5 (Monday-Friday).
 
 ## STEP 5. Connecting the DS3231 real time clock to the board.
-Without a real time clock it is easy for the module to lose the time. Example is a power outage, followed by Internet disconnection (The power outage affects the network equipment). Or a WIFI password change (Without updating our project). With the RTC, the module will continue to work for a long time, until we fix the problem. Full instrctions on:
+Without this it is easy for the module to lose the time especially on power outages. Installation instrctions on:
 
 https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231
 
 ## STEP 7. Collecting the rest of the hardware.
+Apart from Esp32x board + DS3231 + USB +SSR/Relay we also need(Avoid charging only cables. You will not be able to recover the system from WIFI changes.)
 PHOTO-TODO
 - A project enclosure, better to be air tight, to prevent moisture and dust. 
-- Esp32x board + DS3231 + USB cable (from the previous steps). DO NOT USE A 2 CHARGING ONLY CABLE. You will not have any means to recover the system from WIFI changes.
-- A few jumper cables (Warning Use only completely new cables generally are very fragile.`)
-- Alternativelly a screw terminal breakout and simple copper wires. PHOTO
-- SSR (solid state relay) Or a Relay breakout module. I personally use an SSR. TODO own section WARNING SSR cannot completely break the circuit and allows for a few mA to leak even when inactive.
+- A few jumper cables. Use only unused cables.
+- Alternativelly a screw terminal breakout and simple copper wires. PHOTO TODO
 - A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone.
-- A connector for the bell connection.
-- ON/OFF button
-- Optionally an indicator LED. You can bye them ready with cables and resistor, or solder one yourself. See the dedicated paragraph on how to install it.
+- A connector for the bell connection. PHOTO TODO
+- ON/OFF switch
+- Optionally an indicator LED. When the LED blinks the ESP cannot connect to WIFI. You can bye them ready with cables and resistor, or solder one yourself. See the dedicated paragraph on how to install it.
 
 ## STEP 8. Assembling the circuit
-the ESP32 is already connected with the DS3231
+the ESP32 is already connected with the DS3231 from step 3
 now locate the GPIO and the GND pins and connect the SSR with the board
-For a relay breakout you will need the 5V output also. TODO PHOTO
-For the usb cable you will neet to open a hole and then use some Hot glue or UV-glue or
-even better a screw form aliexepress etc. some gummy to fix it
+For the usb cable you will neet to open a hole and then use some Hot glue/UV-glue/Epoxy putty to fix the cable inside the hole.Or a screw form aliexepress etc. 
 TODO photo
+
+## Step 9. Check the assembled box
+Connect the USB cable with the PC and check the functionality of the module. If you have not put the taimetable parameters yet, probably it is a good time to do so.
 
 ## STEP 9. protect the web interface from anauthorized access
 
 Here are 2 solutions. Use both of them if you prefer.
 
-- Set a Web` Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Login with "admin"/"password"). The page is not encrypted so not very secure, but it is on LAN only so I guess is OK.
+- Set a Web` Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Login with "admin"/"password"). The page is not encrypted so not very secure, but it is on LAN only, so I guess is OK.
 
 - Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the huge advantage of not having another password to remember (after 10 years), and this project is about reliability and maintainability. You can add a note on the back of the box (see section recovery)
 Paste this long line to the Tasmota Console:
@@ -206,41 +200,46 @@ Paste this long line to the Tasmota Console:
 backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
 ```
 
-"savedata 0" means the settings changes are not saved automatically from now on, and need a manual restart to be saved. This does not harm our project and in fact prevents flash wear.
+"savedata 0" means the settings changes are not saved automatically from now on, and need a manual restart to be saved. This does not harm our project.
 
 ## STEP 10. Intall the electrical connector (near the manual bell switch)
+SWITCH OFF THE POWER OF THE BELL
+
 PHOTO
 Most probably the school already has a circuit for the bell, and a wall button for manual ringing. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this **dry contact** configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if exists), just disable it.
+If you are sure you can completely remove the old timer and use the 2 wires for our SSR/Relay.
 
 ## STEP 9. Plug the Timer connector in the newly installed connector.
 Make sure that there is a wall electrical socket for the usb charger **DEDICATED** for this purpose. You do not want someone unpluging the timer, to charge a mobile phone or whatever.
 
 ## STEP 10. Reconfigure WIFI to use the AP at school.
 
-**Plug the USB cable to you laptop** (chromium based browser) and search for "tasmota installation" We will use the same tasmota installer.
+**Plug the USB cable to you laptop** (chromium based browser) and type "tasmota installer" We will use the same tasmota installer.
 type Connect and choose the port.
 
 You can try Configure WIFI but it is unreliable at this point(is searching for the old AP)  → Configure WIFI → select the new Access Point + type the pass → Visit Device.
 "Configure Wifi" does not work always. The following seems to be very Reliable
 
 The most reliable way is to use the Logs & Console
-
-backlog ssid1 MyNewAP; password1 MyNewPassword;
-
-Do not forget the "backlog" and the 2 ";"
+```sh
+backlog ssid1 MyNewAP; password1 MyNewPassword; restart 1;
+```
+Do not forget the "backlog" and the ";"
+MyNewAP / MyNewPassword must be the school's WIFI
 
 Wait the module to reset and wait to see if connection works.
 
 Unplug the cable from the laptop and use the USB charger.
 
 
-## STEP 11. DO NOT SKIP THIS ! Document the previous to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point. This way even someone else can do it instead of you.
-The same method can be used if the module is connected to the WIFI but you cant find the IP address and the "school.local" is not working.
-You will probably want to put this ins some accessible place, or to the back of the box.
+## STEP 11. DO NOT SKIP THIS ! Document the previous to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point. This way someone else can do it, instead of you.
+The installer can be used if the module is connected to the WIFI but you cant find the IP address and the "school.local" is not working.(use Visit Device)
+
+You will probably want to put this on some accessible place, or to the back of the box.
 
 Congratulations !
 
-Optional stuff some of them may be of interest to you.
+Optional stuff, some of them may be of interest to you.
 
 ### How to power OFF the module
 Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the SSR or Relay.
@@ -252,25 +251,25 @@ DONT DO IT. the idea for this Timer is to be used by any person/teacher in the s
 in autoexec.be we can
 ```sh
 TTPIN = 12
-TTPIN2 = 12 # Can be the same or different pin
+TTPIN2 = 12 # Can be the same or different pin(= Different SSR and Bell)
 load('timetable')
 ```
-The second timetable can be for example for some special class on Friday afternoon
+The second timetable can be for example for some class on Friday afternoon.
 
-If you need to ring a diferent bell you have to install a second SSR. TTPIN2 must be set accordingly.<br>
 TTPIN3 TTPIN4 also work.
 
 ### Optional indicator LED
-You need something like this
+The LED will light steadily when the module is connected to WIFI and is blinking if the connection cannot be established. You need something like this
 
 TODO photo
 
-You have to install the black female 2.54 connectors yourself (unless you use a screw terminal breakout)
+You have to install the black female 2.54 connectors yourself, unless you use a screw terminal breakout.
+
 The LED is controlled entirelly by the tasmota system not by "timetable.be". For the LED+ you can use any GPIO pin and for the LED- a free GND or a GPIO(configured as GND)
 Configure :
 ```sh
-LED+ ledlink (i)nverted
-LED- Onboard GND or Output Low(=low power GND)
+LED+ GPIO as ledlink (i)nverted
+LED- (Onboard GND) or GPIO as OutputLow
 ```
 ### Disable Device Recovery (Recommended)
 Go to Tools → Console
@@ -299,9 +298,9 @@ In tasmota console:
 backlog 
 ```
 
-| publish topic | payload       | action |
-| ------------- | ------------- | ----- |
-| cmnd/mybell/br | bell_on() | rings the bell |
+| publish topic | payload       | action | response topic |
+| ------------- | ------------- | ----- | ------- |
+| cmnd/mybell/br | bell_on() | rings the bell | stat/mybell/RESULT |
 | cmnd/mybell/br | tt.timetable | shows the timetable |
 | cmnd/mybell/br | tt.set_timetable("1000 1045")| sets the timetable |
 | cmnd/mybell/br | tt.duration | shows the duration |
@@ -321,9 +320,9 @@ They are not very convenient for this specific application. Also there are cases
 At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time. When the Tasmota system supports 5GHz, for example ESP32-C6, I guess it will be trivial to use the new chip, and if I can, I will try to update this page.
 
 ### Why Tasmota and not an embeded programming language (Arduino, micropython circuitpyton, lua or even ESP-IDF) ?
-Tasmota solves for us some very important aspects of the project. Implementing all theese features in bare metal will be very difficult and time consuming.
+Tasmota solves for us some very important aspects of the project. Implementing all theese features in a programming language will be very difficult and time consuming.
 
-- Network connectivity (this includes WIFI autoconnect, optionally MQTT client autoconnect)
+- Network connectivity (this includes WIFI connect and reconnect, optional MQTT client, TLS)
 - A customizable web server, which allows us to create a dedicated page for the timetable.
 - Time Zone and Daylight Time Switching
 - Easy control of peripherals.

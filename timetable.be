@@ -58,6 +58,11 @@ def ttable_combo()
     return idx
   end
 
+  def datetime()
+    var t = tasmota.rtc()['local']
+    return tasmota.strftime("%d %B %Y %H:%M:%S", t)
+  end
+
   # Parses the timetable ie '1000 13:55 8: 00'
   def parse_timetable(s)
     var tt = []
@@ -475,6 +480,9 @@ def ttable_combo()
       else
         webserver.content_send('DS3231 is NOT installed</p>')
       end
+      webserver.content_send('<p style="text-align:center">Current Time : ')
+      webserver.content_send(datetime())
+      webserver.content_send('</p>')
       #webserver.content_send('')
       webserver.content_send('<br><button onclick="location.href=\'/tt?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
       webserver.content_send('<form action="/tt" id="ttform">')
@@ -540,5 +548,4 @@ def ttable_combo()
 end # ttable_combo()
 
 ttable_combo()
-# Ensures we cannot call ttable_combo() again
-ttable_combo = nil
+ttable_combo = nil #  we cannot call ttable_combo() again

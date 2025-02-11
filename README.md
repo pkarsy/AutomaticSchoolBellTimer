@@ -6,7 +6,7 @@ PHOTO BOX - PHOTO materials
 
 ## WARNING
 Most electromechanical school bells use mains voltage (230/110V). The project can be assembled, without connecting to mains power. However when installing to the final location a connection has to be made to the bell.
-**WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** Ask a licenced tecnician to do the mains connection.
+**WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** Ask a licenced technician to do the mains connection.
 
 ## Problems with existing solutions
 - Very limited number of timers, usually smaller than the 14-20 a school needs.
@@ -36,29 +36,29 @@ Most electromechanical school bells use mains voltage (230/110V). The project ca
 - Another very good point in favor of ESP32 boards, is they always come with a dedicated USB-serial chip (CP2102, CH9102, CH340). Many C3 and S2 boards use USB-serial implemented by the ESP itself, and the Tasmota installation/recovery is unstable, as the board vanishes and reappears on reboots.
 
 The boards that i have tested are :
-- ESP32 WROOM-32D devkit boards, 30 and 36 pin versions. Very popular, presoldered headers, with 5V power pin (You can power a relay whith this) and plenty of GPIO and GND pins. This is the safest option. There is also a screw terminal adapter wich makes the assembly even easier. TODO PHOTO
+- ESP32 WROOM-32D devkit boards, 30 and 38 pin versions. Very popular, with 5V power pin (You can power a relay breakout whith this) and plenty of GPIO and GND pins. This is the safest option. There is also a screw terminal adapter wich makes the assembly even easier.
 
 ![ESP32 Wroom](esp32-wroom.jpg)
+![ScrewTerminal](ScrewTerminalAdapter.jpg)
 
-- ESP32 LOLIN32 Lite. Do not connect a LiPo battery. You can drive an SSR, but no 5V output for a relay. No presoldered headers. Only 1 GND pin, but for the very low power DS3231 we can use GPIO pins as VCC and GND.
+- ESP32 LOLIN32 Lite. Do not connect a LiPo battery. You can drive an SSR, but no 5V output for a relay. Only 1 GND pin, but for the very low power DS3231 we can simulate VCC and GND with GPIO pins.
 
 We aware
 - **ESP8266 will NOT work.** It does not support the Berry scripting language.
 
 ## Step 2. Choose the Relay / SSR
-Note that I have (for years) tested the project only with SSR, however it should work OK with a Relay 5V breakout (which contains all circuitry a relay needs to work)
+Note that I have tested (for years) the project with SSR, it should work OK with a Relay 5V breakout (which contains all circuitry a relay needs to work)
 
 **SSR**
 
 ![SSR](FOTEK-SSR-25DA.jpg)
 
 - They work on specific conditions ususally only AC or only DC, and specific votages.
-As we are probably speak about mains voltage. You need a ~230V AC SSR.
-
-- They not need only a GPIO pin and a GND (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
+As we are probably talk about mains voltage, you will need a ~230V AC SSR.
+- They only need a GPIO pin and a GND (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
 - They can have a very long life.
-- Triac based AC solid relays(most AC models) are very well suited for inductive loads.
-- They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check the manual if this tiny mA leak has some safety implications.
+- Triac based AC solid relays(most/all AC models ?) are very well suited for inductive loads.
+- They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other uses. Also check the manual if this tiny mA leak has some safety implications.
  
 Relay breakout Photo TODO
 
@@ -127,7 +127,7 @@ TODO use timetable.be
 do
   var fn = 'ds3231.be'
   var cl = webclient()
-  var url = 'https://raw.githubusercontent.com/pkarsy/TasmotaBerryTime/refs/heads/main/ds3231/' + fn
+  var url = 'https://raw.githubusercontent.com/pkarsmota32/release/tasmota32-ir.binδy/TasmotaBerryTime/refs/heads/main/ds3231/' + fn
   cl.begin(url)
   if cl.GET() != 200 print('Error getting', fn) return end
   var s = cl.get_string()
@@ -167,6 +167,8 @@ Without this it is easy for the module to lose the time especially on power outa
 
 https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231
 
+## STEP6. Add an indicator LED. Optional but recommended
+
 ## STEP 7. Collecting the rest of the hardware.
 Apart from Esp32x board + DS3231 + USB +SSR/Relay we also need(Avoid charging only cables. You will not be able to recover the system from WIFI changes.)
 PHOTO-TODO
@@ -177,6 +179,7 @@ PHOTO-TODO
 - A connector for the bell connection. PHOTO TODO
 - ON/OFF switch
 - Optionally an indicator LED. When the LED blinks the ESP cannot connect to WIFI. You can bye them ready with cables and resistor, or solder one yourself. See the dedicated paragraph on how to install it.
+- Dual tape to fix the , hot glue or UV glue or epoxy putty for the
 
 ## STEP 8. Assembling the circuit
 the ESP32 is already connected with the DS3231 from step 3
@@ -187,27 +190,28 @@ TODO photo
 ## Step 9. Check the assembled box
 Connect the USB cable with the PC and check the functionality of the module. If you have not put the taimetable parameters yet, probably it is a good time to do so.
 
-## STEP 9. protect the web interface from anauthorized access
+## STEP 10. Protecting the web interface from anauthorized access
+Here are some solutions:
 
-Here are 2 solutions. Use both of them if you prefer.
+- Use a wifi Access Point which is dedicated for the bell.
+  This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/passord somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
 
-- Set a Web` Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Login with "admin"/"password"). The page is not encrypted so not very secure, but it is on LAN only, so I guess is OK.
+- Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a save place.
 
-- Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the huge advantage of not having another password to remember (after 10 years), and this project is about reliability and maintainability. You can add a note on the back of the box (see section recovery)
-Paste this long line to the Tasmota Console:
+- Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
+To implement it, paste this line to the Tasmota Console:
 
 ```
 backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
 ```
-
-"savedata 0" means the settings changes are not saved automatically from now on, and need a manual restart to be saved. This does not harm our project.
+Be careful with "savedata 0". It means the tasmota settings are not saved automatically from now on, and you need a manually restart (Not reset !) to be saved. This does not harm our project. 
 
 ## STEP 10. Intall the electrical connector (near the manual bell switch)
-SWITCH OFF THE POWER OF THE BELL
+SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
 
 PHOTO
 Most probably the school already has a circuit for the bell, and a wall button for manual ringing. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this **dry contact** configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if exists), just disable it.
-If you are sure you can completely remove the old timer and use the 2 wires for our SSR/Relay.
+Or if you are sure you can completely remove the old timer, use the 2 wires for our SSR/Relay.
 
 ## STEP 9. Plug the Timer connector in the newly installed connector.
 Make sure that there is a wall electrical socket for the usb charger **DEDICATED** for this purpose. You do not want someone unpluging the timer, to charge a mobile phone or whatever.
@@ -216,9 +220,7 @@ Make sure that there is a wall electrical socket for the usb charger **DEDICATED
 
 **Plug the USB cable to you laptop** (chromium based browser) and type "tasmota installer" We will use the same tasmota installer.
 type Connect and choose the port.
-
-You can try Configure WIFI but it is unreliable at this point(is searching for the old AP)  → Configure WIFI → select the new Access Point + type the pass → Visit Device.
-"Configure Wifi" does not work always. The following seems to be very Reliable
+"Configure Wifi" does not always work.
 
 The most reliable way is to use the Logs & Console
 ```sh
@@ -231,7 +233,6 @@ Wait the module to reset and wait to see if connection works.
 
 Unplug the cable from the laptop and use the USB charger.
 
-
 ## STEP 11. DO NOT SKIP THIS ! Document the previous to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point. This way someone else can do it, instead of you.
 The installer can be used if the module is connected to the WIFI but you cant find the IP address and the "school.local" is not working.(use Visit Device)
 
@@ -241,17 +242,24 @@ Congratulations !
 
 Optional stuff, some of them may be of interest to you.
 
+### More responsive Web Interface
+Console(Web or Serial):
+```sh
+backlog sleep 0; restart 1;
+```
+the module draws more current but the current is generally small and cost savings do not apply. (40mA vs 70mA on loli32 lite).
+
 ### How to power OFF the module
 Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the SSR or Relay.
 
 ### How to disable the bell by software.
-DONT DO IT. the idea for this Timer is to be used by any person/teacher in the school. Use the ON/OFF button for this task. If you really insist on doing this by software, set the duration to 0. But then the ON/OFF button will not work and probably the timer seems to be broken to the other users of the bell.
+**DONT DO IT.** the idea for this Timer is to be used by any person/teacher in the school. Use the ON/OFF button for this task. If you really insist on doing this by software, set the duration to 0. But then the ON/OFF button will not work, and probably the timer seems to be broken to the other users.
 
 ### More than 1 timetable/bells
 in autoexec.be we can
 ```sh
 TTPIN = 12
-TTPIN2 = 12 # Can be the same or different pin(= Different SSR and Bell)
+TTPIN2 = 12 # Can be the same (= the same bell) or different pin (= different SSR and Bell)
 load('timetable')
 ```
 The second timetable can be for example for some class on Friday afternoon.
@@ -269,17 +277,21 @@ The LED is controlled entirelly by the tasmota system not by "timetable.be". For
 Configure :
 ```sh
 LED+ GPIO as ledlink (i)nverted
-LED- (Onboard GND) or GPIO as OutputLow
+LED- (Onboard GND) or any free GPIO as OutputLow
 ```
+
+### No Manual "RING" button ?
+This is the job of a wall button, indepedent of our timer.
+
 ### Disable Device Recovery (Recommended)
+A generally usefull function, however it can result in unexplained device reset, if the wall power is unreliable.
 Go to Tools → Console
-```
+```sh
 backlog SetOption65 1; restart 1;
 ```
-Device Recovery may be useful when we are playing with tasmota, but not on a working device.
 
 ### MQTT server, optional but useful for debugging or remote control
-Altrough you can self host your MQTT server, there are a lot of online MQTT servers free and paid and probably you prefer this for simplicity. Examples are:
+Altrough you can self host your own MQTT server, there are a lot of online MQTT servers free and paid and may you prefer this for simplicity. Examples are (there are more):
 - hivemqtt.com
 - flespi.com
 
@@ -293,22 +305,37 @@ You will also need an mqtt-client such as:
 - (android clients)
 - (android termux clients)
 
-In tasmota console:
+In tasmota console, we enable MQTT :
 ```sh
-backlog 
+setoption3 1
 ```
+after restart paste the following commands, modified of course for your MQTT server.
+```sh
+backlog topic school; setoption132 1; SetOption103 1; MqttHost mqtt.hostname.io; MqttPort 8883 ; MqttUser myusername ; MqttPassword mypassword;
+```
+
+The module will again restart and this time you should see the module connecting and sending status messages to the server. There are lots of things you can do with MQTT but for this project you can use the following commands :
 
 | publish topic | payload       | action | response topic |
 | ------------- | ------------- | ----- | ------- |
-| cmnd/mybell/br | bell_on() | rings the bell | stat/mybell/RESULT |
-| cmnd/mybell/br | tt.timetable | shows the timetable |
-| cmnd/mybell/br | tt.set_timetable("1000 1045")| sets the timetable |
-| cmnd/mybell/br | tt.duration | shows the duration |
-| cmnd/mybell/br | tt.set_duration(5) | sets the duration |
-| cmnd/mybell/br | tt.active_days | shows the active days |
-| cmnd/mybell/br | tt.set_active_days("1-5") | set the active days |
+| cmnd/school/br | bell_on() | rings the bell | stat/school/RESULT |
+| cmnd/school/br | tt.timetable | shows the timetable | stat/school/RESULT |
+| cmnd/school/br | tt.set_timetable("1000 1045")| sets the timetable | stat/school/RESULT |
+| cmnd/school/br | tt.duration | shows the duration | stat/school/RESULT |
+| cmnd/school/br | tt.set_duration(5) | sets the duration | stat/school/RESULT |
+| cmnd/school/br | tt.active_days | shows the active days | stat/school/RESULT |
+| cmnd/school/br | tt.set_active_days("1-5") | set the active days | stat/school/RESULT |
 
-There are a lot of mqtt GUI apps on mobile(and Web) allowing to automate theese commands with buttons if you need this, but I think is overkill, given how rarelly you need to change the settings
+There are a lot of mqtt GUI apps on mobile(and Web) allowing to automate theese commands with buttons if you need this, but I think is overkill, given how rarelly you need to change the settings.
+
+### Control the timer with console comands.
+You can control the timetable with console(serial console or web console) commands.
+```sh
+br bell_on()
+br tt.set_timetable("1000 1045")
+br tt.set_duration(5)
+br tt.set_active_days("1-5")
+```
 
 ### Do I need to update the tasmota system ?
 Probably not. If it is working, dont fix it. The same applies for the berry script.
@@ -331,3 +358,7 @@ Tasmota solves for us some very important aspects of the project. Implementing a
 - Easy realtime clock connection (DS3231).
 - An excellent web based installer. No software is needed for installation (only a chrome based browser) and is working the same on all operating systems.
 - MOST IMPORTANTLY ! Easy recovery and changing the WIFI credentials using the same tasmota web installer (or any serial terminal if you prefer).
+
+### How the tasmota module is getting the time from the Internet.
+This crusial operation is performed by the Tasmota system itself and not by the "timetable.be" script.
+It is using the free and ultra reliable NTP protocol. Practically there is no network provider blocking NTP. The buildin servers are working most of the time, so no need to configure anything.

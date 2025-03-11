@@ -89,7 +89,7 @@ This program is implementintig the timer and the configuration page.
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 
-copy-paste the following code
+paste and execute the following code:
 
 ```berry
 do

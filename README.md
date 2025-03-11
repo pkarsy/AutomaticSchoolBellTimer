@@ -1,5 +1,5 @@
 # Automatic School Bell Timer
-DO NOT DOWNLOAD ANYTHING YET AFTER 1-2 DAYS THIS MESSAGE WILL BE REMOVED
+DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE. AFTER 1-2 DAYS THIS MESSAGE WILL BE REMOVED
 
 ![SchoolTimer](timer.png)
 
@@ -90,8 +90,7 @@ Most/all Relays and SSRs have a LED so we can visually check whether they activa
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 
-paste the following code
-TODO use timetable.be
+copy-paste the following code
 
 ```berry
 do

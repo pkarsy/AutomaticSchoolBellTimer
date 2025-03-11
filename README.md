@@ -19,12 +19,12 @@ DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE. AFTER 1-2 
 - Very low cost (See the list with materials below)
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
-### STEP 1. Connect the electronic parts just the schematic in the start of the page
-The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly evan easier. As you can see we need the ESP32 devkit board, a DS3231 module and an SSR, and a quality USB **DATA** cable.
+### Step 1. Connect the electronic parts just like the above schematic.
+The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly evan easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay, and a quality USB **DATA** cable.
 
-Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a Relay 5V breakout (Not tested). See the dedicated section Relays and SSR for more info.
+Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a Relay 5V breakout (Not tested). See the section **Relays and SSR** for more info.
 
-### STEP 2. Tasmota installation.
+### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
 
 Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, so no need to install anything in your computer apart from the browser. **You may need to press the boot button when plugging the board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
@@ -84,9 +84,8 @@ Without this it is easy for the module to lose the time, on power outages. Insta
 [DS3231 Driver](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
 Basically you save the driver "ds3231.be" in the tasmota filesystem, and you load it automatically using "autoexec.be"
 
-### STEP 4. Berry script installation ("timetable.be")
-*** #### DEL Do not connect the RELAY/SSR AC output to anything yet.
-Most/all Relays and SSRs have a LED so we can visually check whether they activated without connecting the output (to the bell)
+### Step 5. Berry script installation ("timetable.be")
+This program is implementintig the timer and the configuration page.
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 
@@ -130,7 +129,7 @@ load('timetable')
 
 restart the module, and check the console messages.
 
-Go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday).
+Go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load.
 
 ### STEP 7. Collecting the rest of the hardware.
 PHOTO-TODO
@@ -150,20 +149,8 @@ TODO photo
 Connect the USB cable with the PC and check the functionality of the module. If you have not set the taimetable parameters yet, probably this is a good time to do so.
 
 ### STEP 10. Protecting the web interface from anauthorized access
-Here are some solutions:
+Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a save place.
 
-- Use a wifi Access Point which is dedicated for the bell.
-  This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/passord somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
-
-- Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a save place.
-
-- This is a little more advanced, and in fact I am not sure is worth the effort but here it is. Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
-To implement it, paste this line to the Tasmota Console:
-
-```
-backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
-```
-Be careful with "savedata 0". It means the tasmota settings are not saved automatically from now on, and you need a manually restart (Not reset !) to be saved. This does not harm our project. 
 
 ### STEP 11. Intall the electrical connector (near the manual bell switch)
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
@@ -355,6 +342,19 @@ Before creating this project I have tested a lot of timers. The limitations are 
 - Especially WIFI plugs cannot be used as **dry contacts** (See **electrical connection**) this alone can be a deal braker.
 - Wifi based timers do not have internal battery backed RTC, and without network, will lose the time.
 - Limited/No protection from moisture and dust.
+
+### Other solutions to protect the web page.
+
+- Use a wifi Access Point which is dedicated for the bell.
+  This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/passord somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
+
+- This is a little more advanced, and in fact I am not sure is worth the effort or is doing something good, but here it is. Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
+To implement it, paste this line to the Tasmota Console:
+
+```
+backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
+```
+Be careful with "savedata 0". It means the tasmota settings are not saved automatically from now on, and you need a manually restart (Not reset !) to be saved. This does not harm our project. 
 
 ### DELETE TODO
 

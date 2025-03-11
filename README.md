@@ -195,10 +195,9 @@ Wait the module to reset and wait to see if connection works.
 Unplug the cable from the laptop and use the USB charger.
 
 ### STEP 14. DO NOT SKIP THIS ! Document the recovery process
-previous to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point. This way someone else can do it, instead of you.
+previous to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point.
 The installer can be used if the module is connected to the WIFI but you cant find the IP address and the "school.local" is not working.(use Visit Device)
-
-You will probably want to put this on some accessible place, or to the back of the box.
+This way someone else can do it, instead of you.the box.
 
 Congratulations !
 
@@ -209,13 +208,13 @@ Console(Web or Serial):
 ```sh
 backlog sleep 0; restart 1;
 ```
-the module draws more current but the current is generally small and cost savings do not apply. (40mA vs 70mA on loli32 lite).
+the module draws more current but the current is generally very small. (40mA vs 70mA on loli32 lite).
 
 ### How to power OFF the ESP32
-Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the SSR or Relay.
+Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the Relay.
 
 ### How to disable the bell by software.
-**DONT DO IT.** the idea for this Timer is to be used by any person/teacher in the school. Use the ON/OFF button for this task. If you really insist on doing this by software, set the duration to 0. But then the ON/OFF button will not work, and the timer seems to be broken to the other users.
+**DONT DO IT.** the idea for this Timer is to be used by anyone from the staff. Use the ON/OFF button for this task. If you really insist on doing this by software, set the duration to 0. The ON/OFF button will not have any effect of course if duration==0.
 
 ### More than 1 timetable/bells
 in autoexec.be we can
@@ -228,20 +227,7 @@ The second timetable can be for example for some class on Friday afternoon.
 
 TTPIN3 TTPIN4 TTPIN5 also work (highly unlikely that you need them).
 
-### Optional indicator LED
-The LED will light steadily when the module is connected to WIFI and is blinking if the connection cannot be established. You need something like this
-If you have enabled MQTT it needs also to connect to the server.
 
-TODO photo
-
-You have to install the black female 2.54 connectors yourself, unless you use a screw terminal breakout.
-
-The LED is controlled entirelly by the tasmota system not by "timetable.be". For the LED+ you can use any GPIO pin and for the LED- a free GND or a GPIO(configured as GND)
-Configure :
-```sh
-LED+ GPIO as ledlink (i)nverted
-LED- (Onboard GND) or any free GPIO as OutputLow
-```
 
 ### No Manual "RING" button ?
 This is the job of a wall button, indepedent of our timer.
@@ -318,12 +304,12 @@ Tasmota solves for us some very important aspects of the project:
 - Time Zone and Daylight Time Switching.
 - Easy control of peripherals.
 - filesystem and settings storage.
-- a scripting language, the excellent Berry Language. The automation of the bell and the webserver customizations are written in this language.
+- a scripting language, the excellent Berry Language.
 - Easy device connection (DS3231 specifically).
 - An excellent web based installer. No software is needed for installation (only a chrome based browser) and it is working the same on all operating systems.
 - Easy recovery and setting the WIFI credentials using the same tasmota web installer (or any serial terminal if you prefer).
 
-Implementing all theese features within the language, is way more difficult than the school-timer itself.
+Implementing all those features within the language, is way more difficult than the school-timer itself.
 
 ### How Tasmota is getting the time from the Internet.
 NOTE: This crusial operation is performed by the Tasmota system itself and not by the "timetable.be" script.
@@ -331,11 +317,11 @@ It is using the ubiquous and ultra reliable NTP protocol. Practically there is n
 
 
 ### Other boards apart from DevKit
-- ESP32 boards are prefered over ESP32-S2 or ESP32-C3. I have witnessed some instability whith C3 : When the ESP32-C3 cannot find an AccessPoint, frequently crashes. It recovers immediatelly but lets stay on the safe side. I am sure the situation will change to the better over time, but for now (2025) the ESP32 is the best choice. The prices of the boards are very low anyway, and there is no cost reason to prefer one over another.
-- Another very good point in favor of ESP32 boards, is they always come with a dedicated USB-serial chip (CP2102, CH9102, CH340). Many C3 and S2 boards use USB-serial implemented by the ESP itself, and the Tasmota installation/recovery is unstable, as the board vanishes and reappears on reboots.
+- ESP32 boards are prefered over ESP32-S2 or ESP32-C3. I have witnessed some instability whith C3 : When the ESP32-C3 cannot find an AccessPoint, frequently crashes. It recovers immediatelly but lets stay on the safe side.
+- Another very good point in favor of ESP32 boards, is they always come with a dedicated USB-serial chip (CP2102, CH9102, CH340). Many C3 and S2 boards use USB-serial implemented by the ESP itself, and the Tasmota installation/recovery is unstable, as the board vanishes and reappears on chip resets.
 - ESP32 LOLIN32 Lite. Do not connect a LiPo battery. You can drive an SSR, but no 5V output for a relay. Only 1 GND pin, but for the very low power DS3231 we can simulate VCC and GND with GPIO pins.
 We aware
-- **ESP8266 will NOT work.** It does not support the Berry scripting language.
+- **ESP8266 boards do NOT work.** The do not support the Berry scripting language.
 The boards that i have tested are :
 - ESP32 WROOM-32D devkit boards, 30 and 38 pin versions. Very popular, with 5V power pin (You can power a relay breakout whith this) and plenty of GPIO and GND pins. This is the safest option. There is also a screw terminal adapter wich makes the assembly even easier.
 
@@ -345,16 +331,13 @@ The boards that i have tested are :
 
 ![SSR](FOTEK-SSR-25DA.jpg)
 
-- They work on specific conditions ususally only AC or only DC, and specific votages.
-As we are probably talk about mains voltage, you will need a ~230V AC SSR.
-- They only need a GPIO pin and a GND (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
-- They can have a very long life.
-- Triac based AC solid relays(most/all AC models ?) are very well suited for inductive loads.
+- They work on specific conditions ususally only AC or only DC, and specific votages. As we are probably talk about mains voltage, you will need a ~230V AC SSR.
+- They only need a GPIO pin and a GND for control (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
+- They usually have a very long life.
+- Triac based AC solid relays(most/all AC models ?) are very well suited for inductive loads (electromechanical bells).
 - They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other uses. Also check the manual if this tiny mA leak has some safety implications.
  
-Relay breakout Photo TODO
-
-![Relay Breakout](Relay-Breakout-Module-5V.jpg)
+Relay breakout
 
 PHOTO TODO devkit-SSR lolin32-SSR devkit-Relay
 - Needs a +5V a GPIO and a GND(not a GPIO)
@@ -363,6 +346,8 @@ PHOTO TODO devkit-SSR lolin32-SSR devkit-Relay
 I imagine not all relays are the same, but this is a general rule.
 
 ### Problems with existing solutions/ reasons this project is created
+Before creating this project I have tested a lot of timers. The limitations are very severe and I document them here without particular order.
+
 - Very limited number of timers, usually smaller than the 14-20 a school needs.
 - Hard to use control panel.
 - Severe time drift. This basically means constant maintenance and/or that the bell never rings at the expected time. A few minutes/even seconds error does not seem to be a problem at first glance, but the real problem is the argument with the students that the time is passed that they are gonna loose the bus etc.
@@ -372,3 +357,20 @@ I imagine not all relays are the same, but this is a general rule.
 - Especially WIFI plugs cannot be used as **dry contacts** (See **electrical connection**) this alone can be a deal braker.
 - Wifi based timers do not have internal battery backed RTC, and without network, will lose the time.
 - Limited/No protection from moisture and dust.
+
+### DELETE TODO
+
+### Optional indicator LED
+The LED will light steadily when the module is connected to WIFI and is blinking if the connection cannot be established. You need something like this
+If you have enabled MQTT it needs also to connect to the server.
+
+TODO photo
+
+You have to install the black female 2.54 connectors yourself, unless you use a screw terminal breakout.
+
+The LED is controlled entirelly by the tasmota system not by "timetable.be". For the LED+ you can use any GPIO pin and for the LED- a free GND or a GPIO(configured as GND)
+Configure :
+```sh
+LED+ GPIO as ledlink (i)nverted
+LED- (Onboard GND) or any free GPIO as OutputLow
+```

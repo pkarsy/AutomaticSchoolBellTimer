@@ -82,7 +82,7 @@ WARNING the pin of the SSR(D2) is not set in the configuration. We will set this
 ### Step 4. Loading the DS3231 real time clock driver.
 Without this it is easy for the module to lose the time, on power outages. Installation instructions on:
 [DS3231 Driver](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
-Basically you save the driver "ds3231.be" and you load it automatically using "autoexec.be"
+Basically you save the driver "ds3231.be" in the tasmota filesystem, and you load it automatically using "autoexec.be"
 
 ### STEP 4. Berry script installation ("timetable.be")
 *** #### DEL Do not connect the RELAY/SSR AC output to anything yet.
@@ -111,11 +111,11 @@ end
 
 Now you have the "timetable.be" script installed.
 
-Without leaving the Berry Console type:
+Without leaving the Berry Console, type:
 
 ```berry
 load('timetable.be')
-timetable(15) # Is using pin D15 connected to the Relay / SSR
+timetable(2) # We are using pin D2 to control the Relay / SSR
 ```
 
 You will see the timetable starting successfully using some defaults. To be started on boot, it needs to be in "autoexec.be"
@@ -127,30 +127,29 @@ Append the 2 lines.
 load('ds3231') # From the DS3231 step
 
 load('timetable')
-timetable(15) # D15
+timetable(2) # pin = 2
 ```
 
 restart the module, and check the console messages.
 
-Go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. When testing choose * (=ALL) for active days. On school, most probably the setting will be 1-5 (Monday-Friday).
-
+Go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday).
 
 ### STEP 7. Collecting the rest of the hardware.
 PHOTO-TODO
 - A project enclosure, better to be air tight, to prevent moisture and dust. 
 - A few jumper cables. Use only unused cables. Even slightly used cables can be ureliable.
-- Alternativelly a screw terminal breakout and simple copper wires. PHOTO TODO
+- Alternativelly a screw terminal breakout and simple copper wires.
 - A usb charger. No need to be powerful, but it helps to be of some quality, for example from an old phone.
 - A connector for the bell connection. PHOTO TODO
 - ON/OFF switch
-- Dual tape, hot glue, epoxy putty, or anything you prefer to fix things inside the box.
+- Dual tape, hot glue, or anything you prefer to fix things inside the box.
 
 ### STEP 8. Assembling the circuit
-For the usb cable you will neet to open a hole and then use some Hot glue/UV-glue/Epoxy putty to fix the cable inside the hole.Or a screw form aliexepress etc. 
+For the usb cable you will neet to open a hole like this and then use some Hot glue/UV-glue/Epoxy putty to fix the cable inside the hole.
 TODO photo
 
 ### Step 9. Check the assembled box
-Connect the USB cable with the PC and check the functionality of the module. If you have not set the taimetable parameters yet, probably it is a good time to do so.
+Connect the USB cable with the PC and check the functionality of the module. If you have not set the taimetable parameters yet, probably this is a good time to do so.
 
 ### STEP 10. Protecting the web interface from anauthorized access
 Here are some solutions:
@@ -160,7 +159,7 @@ Here are some solutions:
 
 - Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a save place.
 
-- Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
+- This is a little more advanced, and in fact I am not sure is worth the effort but here it is. Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
 To implement it, paste this line to the Tasmota Console:
 
 ```

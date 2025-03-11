@@ -534,8 +534,6 @@ def ttable_combo()
     global.('ttweb'+idx) = TimetableWeb(idx)
   end
 
-  global.timetable = 
-
   for idx:IDXS
     if global.('TTPIN'+idx) != nil
       tt_generator(global.('TTPIN'+idx), idx)

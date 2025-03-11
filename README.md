@@ -25,12 +25,12 @@ The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). 
 Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a Relay 5V breakout (Not tested). See the dedicated section Relays and SSR for more info.
 
 ### STEP 2. Tasmota installation.
-This is a very short and limited installation guide, for more info go to the Tasmota installation page.
+This is a very short guide, for more info go to the Tasmota installation page.
 
 Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, so no need to install anything in your computer apart from the browser. **You may need to press the boot button when plugging the board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
 
-- Go to https://tasmota.github.io/install/ (Or simply search for "tasmota intaller")
-The first option tasmota(english) is the safest option.
+- Go to https://tasmota.github.io/install/ (Or simply search for ["tasmota intaller"](https://duckduckgo.com/?t=h_&q=tasmota+installer)). Tasmota(english) is the safest option.
+
 - Press the connect button → choose the serial port → check "Erase Device" → Next → Install (Dont forget the boot button it might needed)
 - After the installation is complete press Next → Configure WIFI.
 

@@ -39,7 +39,7 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 - When connected, click Visit Device.
   Write down the IP address. This is the web page of the tasmota system. It is accessible only from the LAN.
   
-  From now on we are working via the browser. There is no need for the serial connection anymore. Disconnect the cable from the computer and use a USB charger instead.
+  From now on we are working via the browser. There is no need for the serial connection anymore.
 
 - Set the TimeZone/Dayligtht settings.
 
@@ -68,10 +68,12 @@ For boards other than DevKit of course you need to adapt the pin configurtion. A
 
 ```
 #### For the DS3231 module #########
-GPIO 14 -> OutputLow (acts as GND)
-GPIO 27 -> OutputHi  (acts as VCC)
-GPIO 26 -> I2C SDA
-GPIO 25 -> I2C SCL
+GPIO 26 -> OutputLow (acts as GND)
+GPIO 25 -> OutputHi (acts as VCC)
+GPIO 33 -> I2C SDA
+GPIO 32 -> I2C SCL
+# wasteful on GPIO pins but works on all variants
+# If you want to cascade more I2C devices, use normal GND and VCC
 
 #### For the indicating LED #####
 GPIO 15(D15) -> LedLink_i

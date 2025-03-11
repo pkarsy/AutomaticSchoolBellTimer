@@ -113,8 +113,8 @@ Now you have the "timetable.be" script installed.
 Without leaving the Berry Console, type:
 
 ```berry
+TTPIN=2
 load('timetable.be')
-timetable(2) # We are using pin D2 to control the Relay / SSR
 ```
 
 You will see the timetable starting successfully using some defaults. To be started on boot, it needs to be in "autoexec.be"
@@ -124,9 +124,8 @@ tools → Manage filesystem → edit "autoexec.be" (the white icon with the penc
 Append the 2 lines.
 ```berry
 load('ds3231') # From the DS3231 step
-
+TTPIN = 2
 load('timetable')
-timetable(2) # pin = 2
 ```
 
 restart the module, and check the console messages.

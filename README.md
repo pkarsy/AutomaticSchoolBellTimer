@@ -95,9 +95,9 @@ TODO use timetable.be
 
 ```berry
 do
-  var fn = 'ds3231.be'
+  var fn = 'timetable.be'
   var cl = webclient()
-  var url = 'https://raw.githubusercontent.com/pkarsmota32/release/tasmota32-ir.binδy/TasmotaBerryTime/refs/heads/main/ds3231/' + fn
+  var url = 'https://raw.githubusercontent.com/pkarsy/AutomaticSchoolBellTimer/refs/heads/main/' + fn
   cl.begin(url)
   if cl.GET() != 200 print('Error getting', fn) return end
   var s = cl.get_string()

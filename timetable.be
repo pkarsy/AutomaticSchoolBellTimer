@@ -470,20 +470,16 @@ def ttable_combo()
           t.set_active_days(active_days)
           t.set_duration(duration)
           t.set_timetable(timetable)
-          webserver.content_send('<p style="text-align:center">The settings are stored</p>')
+          webserver.content_send('<p style="text-align:center; background-color: green; color: white;">The settings are stored</p>')
       end
-      #<button onclick="location.href='/tt?bell=1'" name="">Timetable</button>
-      webserver.content_send('<p style="text-align:center">')
-      if global.ds3231 != nil && ds3231.active()
-        #webserver.content_send('<br>DS3231 is installed<br>')
-        webserver.content_send('DS3231 is installed</p>')
+      if global.ds3231 != nil && global.ds3231.active()
+        webserver.content_send('<p style="text-align:center">DS3231 is found</p>')
       else
-        webserver.content_send('DS3231 is NOT installed</p>')
+        webserver.content_send('<p style="text-align:center; background-color: red; color: white;">DS3231 not found</p>')
       end
       webserver.content_send('<p style="text-align:center">Current Time : ')
       webserver.content_send(datetime())
       webserver.content_send('</p>')
-      #webserver.content_send('')
       webserver.content_send('<br><button onclick="location.href=\'/tt?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
       webserver.content_send('<form action="/tt" id="ttform">')
       webserver.content_send('<label for="tt">Timetable' .. t.idx ..' (24h format, can be ie 08:50 or 0850) :</label>')
@@ -512,7 +508,7 @@ def ttable_combo()
       end
 
       def web_add_main_button()
-          webserver.content_send('<button onclick="location.href=\'/tt\'">Timetable</button>')
+          webserver.content_send('<button onclick="location.href=\'/tt\'">School timer 1 settings</button>')
       end
 
       def web_add_handler()
@@ -537,6 +533,8 @@ def ttable_combo()
     if global.('ttweb'+idx) != nil print('ttweb'+idx,'already exists, not creating web') return end
     global.('ttweb'+idx) = TimetableWeb(idx)
   end
+
+  global.timetable = 
 
   for idx:IDXS
     if global.('TTPIN'+idx) != nil

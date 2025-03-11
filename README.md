@@ -27,7 +27,7 @@ Note that I only have tested (and I have tested it for years) the project with o
 ### STEP 2. Tasmota installation.
 This is a very short and limited installation guide, for more info go to the Tasmota installation page.
 
-Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, so no need to install anything in your computer apart from the browser. You may need to press the boot button when plugging the board to the computer. Linux users may get serial permission error, you have to add yourself to the "dialout" group.
+Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, so no need to install anything in your computer apart from the browser. **You may need to press the boot button when plugging the board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
 
 - Go to https://tasmota.github.io/install/ (Or simply search for "tasmota intaller")
 The first option tasmota(english) is the safest option.
@@ -77,18 +77,16 @@ GPIO 25 -> I2C SCL
 GPIO 15(D15) -> LedLink_i
 # GND is next to D15
 ```
-WARNING the pin of the SSR(D15) is not set in the configuration. We set this in autoexec.be as we will see.
+WARNING the pin of the SSR(D2) is not set in the configuration. We will set this later on. 
 
 ### Step 4. Loading the DS3231 real time clock driver.
 Without this it is easy for the module to lose the time, on power outages. Installation instructions on:
-https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231
+[DS3231 Driver](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
 Basically you save the driver "ds3231.be" and you load it automatically using "autoexec.be"
 
 ### STEP 4. Berry script installation ("timetable.be")
 *** #### DEL Do not connect the RELAY/SSR AC output to anything yet.
 Most/all Relays and SSRs have a LED so we can visually check whether they activated without connecting the output (to the bell)
-
-TODO Photo
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 

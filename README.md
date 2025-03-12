@@ -306,27 +306,22 @@ ESP32 LOLIN32 Lite: The battery charger must not be used, no 5V output for a rel
 
 - Avoid tiny boards, almost always are missing crusial parts like Serial, GND etc.
 
-- **ESP8266 boards do NOT work.** The do not support the Berry scripting language.
+- ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
-### Relays and SSR
+### Solid state Relays
 
-**SSR**
-
-![SSR](FOTEK-SSR-25DA.jpg)
-
-- They work on specific conditions ususally only AC or only DC, and specific votages. As we are probably talk about mains voltage, you will need a ~230V AC SSR.
+- They work on specific conditions ususally only AC or only DC, and specific voltages. As we are probably talk about mains voltage, you will need a ~230V(or 110) AC relay.
 - They only need a GPIO pin and a GND for control (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
 - They usually have a very long life.
 - Triac based AC solid relays(most/all AC models ?) are very well suited for inductive loads (electromechanical bells).
 - They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other uses. Also check the manual if this tiny mA leak has some safety implications.
- 
-Relay breakout
 
-PHOTO TODO devkit-SSR lolin32-SSR devkit-Relay
-- Needs a +5V a GPIO and a GND(not a GPIO)
+### Electromechanical relays
+you have to use a [5V relay breakout board](https://duckduckgo.com/?q=5v+relay+breakout+single&t=h_&iar=images&iax=images&ia=images),
+
+- They needs a +5V a GPIO and a GND(not a GPIO)
 - They work for AC and DC and and A wide range of voltages.
-- Generally not well suited for inductive loads. (electromechanical bells are inductive)
-I imagine not all relays are the same, but this is a general rule.
+- Generally not well suited for inductive loads. (electromechanical bells) I imagine not all relays are the same, but this is a general rule.
 
 ### Problems with existing solutions/ reasons this project is created
 Before creating this project I have tested a lot of timers. The limitations are very severe and I document them here without particular order.
@@ -341,32 +336,14 @@ Before creating this project I have tested a lot of timers. The limitations are 
 - Wifi based timers do not have internal battery backed RTC, and without network, will lose the time.
 - Limited/No protection from moisture and dust.
 
-### Other solutions to protect the web page.
+### Various solutions to protect the web page(additonally/instead of password).
 
 - Use a wifi Access Point which is dedicated for the bell.
   This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/passord somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
 
 - This is a little more advanced, and in fact I am not sure is worth the effort or is doing something good, but here it is. Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
 To implement it, paste this line to the Tasmota Console:
-
 ```
 backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
 ```
 Be careful with "savedata 0". It means the tasmota settings are not saved automatically from now on, and you need a manually restart (Not reset !) to be saved. This does not harm our project. 
-
-### DELETE TODO
-
-### Optional indicator LED
-The LED will light steadily when the module is connected to WIFI and is blinking if the connection cannot be established. You need something like this
-If you have enabled MQTT it needs also to connect to the server.
-
-TODO photo
-
-You have to install the black female 2.54 connectors yourself, unless you use a screw terminal breakout.
-
-The LED is controlled entirelly by the tasmota system not by "timetable.be". For the LED+ you can use any GPIO pin and for the LED- a free GND or a GPIO(configured as GND)
-Configure :
-```sh
-LED+ GPIO as ledlink (i)nverted
-LED- (Onboard GND) or any free GPIO as OutputLow
-```

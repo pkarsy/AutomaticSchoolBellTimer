@@ -343,7 +343,7 @@ Before creating this project I have tested a lot of timers. The limitations are 
 
 - This is a little more advanced, and in fact I am not sure is worth the effort or is doing something good, but here it is. Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
 To implement it, paste this line to the Tasmota Console:
-```
-backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
-```
-Be careful with "savedata 0". It means the tasmota settings are not saved automatically from now on, and you need a manually restart (Not reset !) to be saved. This does not harm our project. 
+  ```
+  backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
+  ```
+  Be careful with "savedata 0". It means the tasmota settings are not saved automatically from now on, and you need a manually restart (Not reset !) to be saved. This does not harm our project. 

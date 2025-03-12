@@ -64,8 +64,7 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 ###  Step 3. Pin configuration
 WebBrowser → IP address (or school.local) → Configure → Module
 
-For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D14 and D27 to power the DS3231. The DS3231 needs only 4mA and the ESP32 can give 30mA or more per pin. This way we can make the board connection very easy (We can even solder the DS3231 if we wanted to).
-
+For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D14 and D27 to power the DS3231(needs only about 4mA).
 ```
 #### For the DS3231 module #########
 GPIO 26 -> OutputLow (acts as GND)

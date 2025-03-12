@@ -77,7 +77,7 @@ GPIO 32 -> I2C SCL
 GPIO 15(D15) -> LedLink_i
 # GND is next to D15
 ```
-WARNING the pin of the SSR(D2) is not set in the configuration. We will set this later on. 
+WARNING the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on. 
 
 ### Step 4. Loading the DS3231 real time clock driver.
 Without this it is easy for the module to lose the time, on power outages. Installation instructions on:
@@ -109,10 +109,10 @@ end
 
 Now you have the "timetable.be" script installed.
 
-Without leaving the Berry Console, type:
+Without leaving the Berry Console, write:
 
 ```berry
-TTPIN=2
+TTPIN = 4
 load('timetable.be')
 ```
 
@@ -123,7 +123,7 @@ tools → Manage filesystem → edit "autoexec.be" (the white icon with the penc
 Append the 2 lines.
 ```berry
 load('ds3231') # From the DS3231 step
-TTPIN = 2
+TTPIN = 4
 load('timetable')
 ```
 
@@ -200,8 +200,8 @@ Unplug the USB charger. The ON/OFF button as we have seen, only disables the out
 ### More than 1 timetable/bells
 in autoexec.be we write
 ```sh
-TTPIN = 12
-TTPIN2 = 12 # Can be the same (= the same bell) or different pin (= different SSR and Bell)
+TTPIN = 4
+TTPIN2 = 4 # Can be the same (= the same bell) or different pin (= different SSR and Bell)
 load('timetable')
 ```
 The second timetable can be (for example) an additional class on Friday afternoon.

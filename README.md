@@ -259,14 +259,14 @@ There are a lot of mqtt GUI apps on mobile(and Web) allowing to automate theese 
 ### Control the timer with console comands.
 You can control the timetable with console(serial console or web console) commands.
 ```sh
-br bell_on()
+br tt.bell_on()
 br tt.set_timetable("1000 1045")
 br tt.set_duration(5)
 br tt.set_active_days("1-5")
 ```
 
 ### Do I need to update the tasmota system ?
-Probably not. If it is working, dont fix it. The same applies for the berry script.
+Probably not. If it is working, don't fix it. The same applies for the berry script.
 
 ### Why not using the buildin tasmota timers
 They are not very convenient for this specific application. Also there are cases ( schools with day+afternoon timetable) where the available timers are not enough. The "timetable.be" script offers an unlimited number of timers and a relatively easy to use web interface.

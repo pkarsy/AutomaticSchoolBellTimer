@@ -72,8 +72,6 @@ GPIO 26 -> OutputLow (acts as GND)
 GPIO 25 -> OutputHi (acts as VCC)
 GPIO 33 -> I2C SDA
 GPIO 32 -> I2C SCL
-# wasteful on GPIO pins but works on all variants
-# If you want to cascade more I2C devices, use normal GND and VCC
 
 #### For the indicating LED #####
 GPIO 15(D15) -> LedLink_i
@@ -133,7 +131,7 @@ restart the module, and check the console messages.
 
 Go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load.
 
-### STEP 7. Collecting the rest of the hardware.
+### Step 6. Collecting the rest of the hardware.
 PHOTO-TODO
 - A project enclosure, better to be air tight, to prevent moisture and dust. 
 - A few jumper cables. Use only unused cables. Even slightly used cables can be ureliable.
@@ -143,28 +141,27 @@ PHOTO-TODO
 - ON/OFF switch
 - Dual tape, hot glue, or anything you prefer to fix things inside the box.
 
-### STEP 8. Assembling the circuit
-For the usb cable you will neet to open a hole like this and then use some Hot glue/UV-glue/Epoxy putty to fix the cable inside the hole.
+### Step 7. Assembling the circuit
+For the usb cable you will neet to open a hole like this and then use some Hot glue/Epoxy putty to fix the cable inside the hole.
 TODO photo
-
-### Step 9. Check the assembled box
+Check the assembled box
 Connect the USB cable with the PC and check the functionality of the module. If you have not set the taimetable parameters yet, probably this is a good time to do so.
 
-### STEP 10. Protecting the web interface from anauthorized access
-Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a save place.
+### Step 8. Protecting the web interface from anauthorized access
+Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a save place. There is a paragrapaph at the end of the page with oter solutions.
 
 
-### STEP 11. Intall the electrical connector (near the manual bell switch)
+### Step 9. Intall the electrical connector (near the manual bell switch)
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
 
 PHOTO
 Most probably the school already has a circuit for the bell, and a wall button for manual ringing. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this **dry contact** configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if exists), just disable it.
 Or if you are sure you can completely remove the old timer, use the 2 wires for our SSR/Relay.
-
-### STEP 12. Plug the Timer connector in the newly installed connector.
+TODO
+Plug the Timer connector in the newly installed connector.
 Make sure that there is a wall electrical socket for the usb charger **DEDICATED** for this purpose. You do not want someone unpluging the timer, to charge a mobile phone or whatever.
 
-### STEP 13. Reconfigure WIFI to use the AP at school.
+### Step 10. Reconfigure WIFI to use the new AccessPoint.
 
 **Plug the USB cable to you laptop** (chromium based browser) and type "tasmota installer" We will use the same tasmota installer.
 type Connect and choose the port.
@@ -172,23 +169,20 @@ type Connect and choose the port.
 
 The most reliable way is to use the Logs & Console
 ```sh
-backlog ssid1 MyNewAP; password1 MyNewPassword; restart 1;
+backlog ssid1 MyNewAP; password1 MyNewPassword
 ```
-Do not forget the "backlog" and the ";"
-MyNewAP / MyNewPassword must be the school's WIFI
 
 Wait the module to reset and wait to see if connection works.
 
 Unplug the cable from the laptop and use the USB charger.
 
-### STEP 14. DO NOT SKIP THIS ! Document the recovery process
-previous to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point.
-The installer can be used if the module is connected to the WIFI but you cant find the IP address and the "school.local" is not working.(use Visit Device)
-This way someone else can do it, instead of you.the box.
+### Last Step. Document the recovery process
+Document to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point.
 
 Congratulations !
 
-Optional stuff, some of them may be of interest to you.
+
+**############## Optional topics, some of them may be of interest to you. ##############**
 
 ### More responsive Web Interface
 Console(Web or Serial):
@@ -210,11 +204,9 @@ TTPIN = 12
 TTPIN2 = 12 # Can be the same (= the same bell) or different pin (= different SSR and Bell)
 load('timetable')
 ```
-The second timetable can be for example for some class on Friday afternoon.
+The second timetable can be ie an additional class on Friday afternoon.
 
 TTPIN3 TTPIN4 TTPIN5 also work (highly unlikely that you need them).
-
-
 
 ### No Manual "RING" button ?
 This is the job of a wall button, indepedent of our timer.
@@ -227,11 +219,11 @@ backlog SetOption65 1; restart 1;
 ```
 
 ### MQTT server, optional but useful for debugging and remote control
-Altrough you can self host your own MQTT server, there are a lot of online MQTT servers free and paid and may you prefer this for simplicity. Examples are (there are more):
+There are a lot of online MQTT servers free and paid and may you prefer this instead of hosting your own. Examples are (there are more):
 - hivemqtt.com
 - flespi.com
 
-You must use the TLS connection, all online servers support secure connections.
+You must use the TLS connection, all online servers support secure connections. **If you are not using TLS better do not use MQTT at all**
 
 You will also need an mqtt-client such as:
 
@@ -250,11 +242,11 @@ after restart paste the following commands, modified of course for your MQTT ser
 backlog topic school; setoption132 1; SetOption103 1; MqttHost mqtt.hostname.io; MqttPort 8883 ; MqttUser myusername ; MqttPassword mypassword;
 ```
 
-The module will again restart and this time you should see the module connecting and sending status messages to the server. There are lots of things you can do with MQTT but for this project you can use the following commands :
+The module will again restart and this time you should see the module connecting and sending status messages to the server. There are lots of things you can do with MQTT but for this specific project you can use the following commands :
 
 | publish topic | payload       | action | response topic |
 | ------------- | ------------- | ----- | ------- |
-| cmnd/school/br | bell_on() | rings the bell | stat/school/RESULT |
+| cmnd/school/br | tt.bell_on() | rings the bell | stat/school/RESULT |
 | cmnd/school/br | tt.timetable | shows the timetable | stat/school/RESULT |
 | cmnd/school/br | tt.set_timetable("1000 1045")| sets the timetable | stat/school/RESULT |
 | cmnd/school/br | tt.duration | shows the duration | stat/school/RESULT |
@@ -280,7 +272,7 @@ Probably not. If it is working, dont fix it. The same applies for the berry scri
 They are not very convenient for this specific application. Also there are cases ( schools with day+afternoon timetable) where the available timers are not enough. The "timetable.be" script offers an unlimited number of timers and a relatively easy to use web interface.
 
 ### 5Ghz wifi. Currrently not working
-At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time. When the Tasmota system supports 5GHz, for example ESP32-C6, I guess it will be trivial to use the new chip, and if I can, I will try to update this page.
+At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time. When the Tasmota system supports 5GHz, for example ESP32-C6, I guess it will be relatively easy to use the new chip.
 
 ### Why Tasmota and not an embeded programming language (Arduino, micropython circuitpyton, lua or even ESP-IDF) ?
 Tasmota solves for us some very important aspects of the project:
@@ -296,21 +288,25 @@ Tasmota solves for us some very important aspects of the project:
 - An excellent web based installer. No software is needed for installation (only a chrome based browser) and it is working the same on all operating systems.
 - Easy recovery and setting the WIFI credentials using the same tasmota web installer (or any serial terminal if you prefer).
 
-Implementing all those features within the language, is way more difficult than the school-timer itself.
-
 ### How Tasmota is getting the time from the Internet.
-NOTE: This crusial operation is performed by the Tasmota system itself and not by the "timetable.be" script.
-It is using the ubiquous and ultra reliable NTP protocol. Practically there is no network provider blocking NTP. The buildin servers just work, so no need to configure anything.
+This crusial operation is performed by the Tasmota system itself and not by the "timetable.be" script.
+It is using the ubiquous and ultra reliable NTP protocol. The buildin servers just work, so no need to configure anything.
 
+### Using other boards instead of DevKit
+The most important defference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
 
-### Other boards apart from DevKit
-- ESP32 boards are prefered over ESP32-S2 or ESP32-C3. I have witnessed some instability whith C3 : When the ESP32-C3 cannot find an AccessPoint, frequently crashes. It recovers immediatelly but lets stay on the safe side.
-- Another very good point in favor of ESP32 boards, is they always come with a dedicated USB-serial chip (CP2102, CH9102, CH340). Many C3 and S2 boards use USB-serial implemented by the ESP itself, and the Tasmota installation/recovery is unstable, as the board vanishes and reappears on chip resets.
-- ESP32 LOLIN32 Lite. Do not connect a LiPo battery. You can drive an SSR, but no 5V output for a relay. Only 1 GND pin, but for the very low power DS3231 we can simulate VCC and GND with GPIO pins.
-We aware
+- ESP32 boards(like DevKit) are prefered over ESP32-S2 or ESP32-C3. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering.
+
+- ESP32-C3. I have witnessed some instability whith C3(at 2025) : When the ESP32-C3 does not find an AccessPoint, frequently crashes. It recovers immediatelly but lets stay on the safe side. Some boards do not have Serial ardware.
+
+- ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable.
+
+- There are many board specific limitations. For example for
+ESP32 LOLIN32 Lite: The battery charger must not be used, no 5V output for a relay. Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
+
+- Avoid tiny boards, almost always are missing crusial parts like Serial, GND etc.
+
 - **ESP8266 boards do NOT work.** The do not support the Berry scripting language.
-The boards that i have tested are :
-- ESP32 WROOM-32D devkit boards, 30 and 38 pin versions. Very popular, with 5V power pin (You can power a relay breakout whith this) and plenty of GPIO and GND pins. This is the safest option. There is also a screw terminal adapter wich makes the assembly even easier.
 
 ### Relays and SSR
 

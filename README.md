@@ -195,18 +195,18 @@ the module draws more current but the current is generally very small. (40mA vs 
 Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the Relay.
 
 ### How to disable the bell by software.
-**DONT DO IT.** the idea for this Timer is to be used by anyone from the staff. Use the ON/OFF button for this task. If you really insist on doing this by software, set the duration to 0. The ON/OFF button will not have any effect of course if duration==0.
+**DO NOT DO THIS.** The timer should be used by anyone from the personell. Use the ON/OFF button for this task. If you really insist on doing this by software, set the duration to 0. The ON/OFF button will not have any effect of course if duration==0.
 
 ### More than 1 timetable/bells
-in autoexec.be we can
+in autoexec.be we write
 ```sh
 TTPIN = 12
 TTPIN2 = 12 # Can be the same (= the same bell) or different pin (= different SSR and Bell)
 load('timetable')
 ```
-The second timetable can be ie an additional class on Friday afternoon.
+The second timetable can be (for example) an additional class on Friday afternoon.
 
-TTPIN3 TTPIN4 TTPIN5 also work (highly unlikely that you need them).
+TTPIN3 TTPIN4 TTPIN5 also work (highly unlikely that you ever need them).
 
 ### No Manual "RING" button ?
 This is the job of a wall button, indepedent of our timer.

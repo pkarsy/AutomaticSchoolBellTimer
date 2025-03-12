@@ -473,11 +473,11 @@ def ttable_combo()
           webserver.content_send('<p style="text-align:center; background-color: green; color: white;">The settings are stored</p>')
       end
       if global.ds3231 != nil && global.ds3231.active()
-        webserver.content_send('<p style="text-align:center">DS3231 is found</p>')
+        webserver.content_send('<p style="text-align:center">DS3231 is working</p>')
       else
         webserver.content_send('<p style="text-align:center; background-color: red; color: white;">DS3231 not found</p>')
       end
-      webserver.content_send('<p style="text-align:center">Current Time : ')
+      webserver.content_send('<p style="text-align:center">Local Time (Refresh the page to update) : ')
       webserver.content_send(datetime())
       webserver.content_send('</p>')
       webserver.content_send('<br><button onclick="location.href=\'/tt?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')

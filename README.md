@@ -1,5 +1,5 @@
 # Automatic School Bell Timer
-DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE. AFTER 1-2 DAYS THIS MESSAGE WILL BE REMOVED
+DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE mainly on electrical connection. AFTER 1-2 DAYS THIS MESSAGE WILL BE REMOVED
 
 ![SchoolTimer](timer.png)
 
@@ -324,26 +324,18 @@ you have to use a [5V relay breakout board](https://duckduckgo.com/?q=5v+relay+b
 - Generally not well suited for inductive loads. (electromechanical bells) I imagine not all relays are the same, but this is a general rule.
 
 ### Problems with existing solutions/ reasons this project is created
-Before creating this project I have tested a lot of timers. The limitations are very severe and I document them here without particular order.
+Before creating this project I have tested a lot of timers. The limitations were very severe, and I document them here without particular order.
 
 - Very limited number of timers, usually smaller than the 14-20 a school needs.
-- Hard to use control panel.
+- Hard to use, almost unusable hardware control panel.
 - Severe time drift. This basically means constant maintenance and/or that the bell never rings at the expected time. A few minutes/even seconds error does not seem to be a problem at first glance, but the real problem is the argument with the students that the time is passed that they are gonna loose the bus etc.
 - Not capable of switching to Daylight savings time. Even WIFI plugs have problems on this.
 - Computer based solutions suffer from complexity and unreliability. Operating system updates, broken harware, high electricity consumption, audio equipment maintainance, are some of the drawbacks.
-- Wall WIFI plugs like TUYA, sonoff etc have almost always the problem with limited number of timers. Not to mention that every one needs a different mobile application, and they can ONLY be controlled by their modile app.
-- Especially WIFI plugs cannot be used as **dry contacts** (See **electrical connection**) this alone can be a deal braker.
+- Wall WIFI plugs like TUYA, sonoff etc have almost always the problem with limited number of timers. Every one needs a different mobile application, and they can ONLY be controlled by their modile app.
+- Especially WIFI plugs cannot be used as [dry(no voltage) contacts](https://en.wikipedia.org/wiki/Dry_contact) (See **electrical connection**).
 - Wifi based timers do not have internal battery backed RTC, and without network, will lose the time.
 - Limited/No protection from moisture and dust.
 
-### Various solutions to protect the web page(additonally/instead of password).
+### Another solution to protect the web page(additonally/instead of password).
+Use a wifi Access Point which is dedicated for the bell. This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/passord somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
 
-- Use a wifi Access Point which is dedicated for the bell.
-  This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/passord somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
-
-- This is a little more advanced, and in fact I am not sure is worth the effort or is doing something good, but here it is. Automatically disable the webserver 5min after powerup. When you need to access the web interface, unplug the power and connect again. Not very secure, but it has the advantage of not having another password to remember (after 10 years). You can add a note on the back of the box (see section recovery)
-To implement it, paste this line to the Tasmota Console:
-  ```
-  backlog savedata 0; Rule1 ON Wifi#Connected DO webserver 2 ENDON ON Wifi#Connected DO RuleTimer1 300 ENDON ON Rules#Timer=1 DO webserver 0 ENDON; rule1 1; restart 1;
-  ```
-  Be careful with "savedata 0". It means the tasmota settings are not saved automatically from now on, and you need a manually restart (Not reset !) to be saved. This does not harm our project. 

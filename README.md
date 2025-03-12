@@ -20,7 +20,7 @@ DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE mainly on e
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly evan easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay, and a quality USB **DATA** cable.
+The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly evan easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay, and a quality USB **DATA** cable.
 
 Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a Relay 5V breakout (Not tested). See the section **Relays and SSR** for more info.
 
@@ -295,16 +295,15 @@ It is using the ubiquous and ultra reliable NTP protocol. The buildin servers ju
 ### Using other boards instead of DevKit
 The most important defference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
 
-- ESP32 boards(like DevKit) are prefered over ESP32-S2 or ESP32-C3. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering.
+- ESP32 boards(like DevKit) are prefered over ESP32-S2 or ESP32-C3. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use)
 
-- ESP32-C3. I have witnessed some instability whith C3(at 2025) : When the ESP32-C3 does not find an AccessPoint, frequently crashes. It recovers immediatelly but lets stay on the safe side. Some boards do not have Serial ardware.
+- ESP32-C3. I have witnessed some instability whith C3(at 2025) : When the ESP32-C3 does not find an AccessPoint, frequently crashes. It recovers immediatelly but lets stay on the safe side. Some boards do not have Serial hardware creating headaches with installation and recovering.
 
 - ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable.
 
-- There are many board specific limitations. For example for
-ESP32 LOLIN32 Lite: The battery charger must not be used, no 5V output for a relay. Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
+- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): The battery charger must not be used, no 5V output for a relay. Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
 
-- Avoid tiny boards, almost always are missing crusial parts like Serial, GND etc.
+- Avoid tiny boards no matter how cute they are, almost always are missing crusial parts like Serial, GND etc.
 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 

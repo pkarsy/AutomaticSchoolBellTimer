@@ -354,7 +354,7 @@ def ttable_combo()
       end
       dur = real(dur)
       if dur < 0 dur = 0 end
-      if dur > 12 dur = 12 end # Maximum 12 seconds no need for more
+      if dur > 15 dur = 15 end # Maximum 15 seconds, no need for more
       dur = int(dur*10+0.5)*1.0/10 # we need 1 decimal place maximum
       return dur
     end
@@ -508,7 +508,7 @@ def ttable_combo()
       end
 
       def web_add_main_button()
-          webserver.content_send('<button onclick="location.href=\'/tt' + self.idx + '\'">School Timer ' + self.idx + '</button>')
+          webserver.content_send('<button onclick="location.href=\'/tt' + self.idx + '\'">School Timer ' + self.idx + '</button><br><br>')
       end
 
       def web_add_handler()

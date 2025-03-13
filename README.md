@@ -1,5 +1,5 @@
 # Automatic School Bell Timer
-DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE mainly on electrical connection. AFTER 1-2 DAYS THIS MESSAGE WILL BE REMOVED
+WARNING SOME SECTIONS ARE NOT READY YET, IN A FEW DAYS THIS MESSAGE WILL BE REMOVED
 
 ![SchoolTimer](timer.png)
 
@@ -133,7 +133,7 @@ PHOTO-TODO
 - ON/OFF switch
 - Dual tape, hot glue, or anything you prefer to fix things inside the box.
 
-### Step 7. Assembling the circuit
+### Step 7. Assembling the circuit NEEW WORK TODO
 For the usb cable you will neet to open a hole like this and then use some Hot glue/Epoxy putty to fix the cable inside the hole.
 TODO photo
 Check the assembled box
@@ -142,7 +142,7 @@ Connect the USB cable with the PC and check the functionality of the module. If 
 ### Step 8. Protect the web interface from anauthorized access
 Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a safe place.
 
-### Step 9. Install the electrical connector (near the manual bell switch)
+### Step 9. Install the electrical connector (near the manual bell switch) NEED WORK TODO
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
 
 PHOTO

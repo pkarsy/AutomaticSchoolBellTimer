@@ -146,16 +146,15 @@ TODO photo
 Check the assembled box
 Connect the USB cable with the PC and check the functionality of the module. If you have not set the taimetable parameters yet, probably this is a good time to do so.
 
-### Step 8. Protecting the web interface from anauthorized access
-Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a save place. There is a paragrapaph at the end of the page with oter solutions.
-
+### Step 8. Protect the web interface from anauthorized access
+Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a safe place.
 
 ### Step 9. Intall the electrical connector (near the manual bell switch)
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
 
 PHOTO
-Most probably the school already has a circuit for the bell, and a wall button for manual ringing. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this **dry contact** configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if exists), just disable it.
-Or if you are sure you can completely remove the old timer, use the 2 wires for our SSR/Relay.
+Most probably the school already has a circuit for the bell, and a wall button for manual ringing. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if exists), just disable it.
+Or if you are sure you can completely remove the old timer, use the 2 wires for our Relay.
 TODO
 Plug the Timer connector in the newly installed connector.
 Make sure that there is a wall electrical socket for the usb charger **DEDICATED** for this purpose. You do not want someone unpluging the timer, to charge a mobile phone or whatever.
@@ -179,7 +178,6 @@ Unplug the cable from the laptop and use the USB charger.
 Document to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point.
 
 Congratulations !
-
 
 **############## Optional topics, some of them may be of interest to you. ##############**
 

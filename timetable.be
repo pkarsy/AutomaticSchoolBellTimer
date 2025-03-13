@@ -508,7 +508,7 @@ def ttable_combo()
       end
 
       def web_add_main_button()
-          webserver.content_send('<button onclick="location.href=\'/tt\'">School Timer</button>')
+          webserver.content_send('<button onclick="location.href=\'/tt\'">School Timer'..self.idx..'</button>')
       end
 
       def web_add_handler()

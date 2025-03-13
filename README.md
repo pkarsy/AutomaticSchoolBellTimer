@@ -20,9 +20,9 @@ DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE mainly on e
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly evan easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay, and a quality USB **DATA** cable.
+The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay, and a quality USB **DATA** cable.
 
-Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a Relay 5V breakout (Not tested). See the section **Relays and SSR** for more info.
+Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info.
 
 ### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
@@ -77,7 +77,7 @@ Without this it is easy for the module to lose the time, on power outages. Insta
 Basically you save the driver "ds3231.be" in the tasmota filesystem, and you load it automatically using "autoexec.be"
 
 ### Step 5. Berry script installation ("timetable.be")
-This program is implementintig the timer and the configuration page.
+This program is implementing the timer engine and the web configuration page.
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 

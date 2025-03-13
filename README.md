@@ -110,7 +110,7 @@ TTPIN = 4 ### pin D4
 load('timetable')
 ```
 
-You will see the timetable starting using some defaults. To be started on every boot, it needs to be in "autoexec.be"
+You will see the timetable starting, using some defaults. To be started on every boot, it needs to be in "autoexec.be"
 
 tools → Manage filesystem → edit "autoexec.be" (the white icon with the pencil). You have probably already created the file in DS3231 step, otherwise create it now.
 
@@ -126,14 +126,14 @@ Restart the module and go with the browser to the same IP address(or school.loca
 ### Step 6. Collecting the rest of the hardware.
 PHOTO-TODO
 - A project enclosure, better to be air tight, to prevent moisture and dust. 
-- A few jumper cables. Use only unused cables. Even slightly used cables can be ureliable.
-- Alternativelly a screw terminal breakout and simple copper wires.
+- A few jumper cables (2.54 spacing). Use only unused cables, you have been warned.
+- Alternativelly a Devkit screw terminal breakout and simple copper wires.
 - A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone.
 - A connector for the bell connection. PHOTO TODO
-- ON/OFF switch
+- ON/OFF switch. The switch will be in series with the bell.
 - Dual tape, hot glue, or anything you prefer to fix things inside the box.
 
-### Step 7. Assembling the circuit NEEW WORK TODO
+### Step 7. Assembling the circuit NEED WORK TODO
 For the usb cable you will neet to open a hole like this and then use some Hot glue/Epoxy putty to fix the cable inside the hole.
 TODO photo
 Check the assembled box

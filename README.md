@@ -27,23 +27,26 @@ Note that I only have tested (and I have tested it for years) the project with o
 ### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
 
-Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, so no need to install anything in your computer apart from the browser. **You may need to press the boot button when plugging the board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
+Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, there is no need to install anything in your computer apart from the browser. **You may need to press the boot button when plugging the ESP board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
 
 - Go to https://tasmota.github.io/install/ (Or simply search for ["tasmota intaller"](https://duckduckgo.com/?t=h_&q=tasmota+installer)). Tasmota(english) is the safest option.
 
-- Press the connect button → choose the serial port → check "Erase Device" → Next → Install (Dont forget the boot button it might needed)
+- Press the connect button → choose the serial port → check "Erase Device" → Next → Install (a boot button press might needed)
 - After the installation is complete press Next → Configure WIFI.
 
-  Use the current WIFI, even if it is going to be different at the end. When we move to the final location we can easily change the Access Point.
+  Use the current WIFI, even if it is going to be different at the end. When we move to the final location we can change the Access Point.
 
 - When connected, click Visit Device.
-  Write down the IP address. This is the web page of the tasmota system. It is accessible only from the LAN.
+  Write down the IP address. This is the web page of the tasmota system. It is accessible from the LAN.
   
-  From now on we are working via the browser. There is no need for the serial connection anymore.
+  From now on we are working via the browser. We will need serial connection again when we want to change Wifi.
 
 - Set the TimeZone/Dayligtht settings.
 
-  To do this, in **another tab** go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/)
+  To do this, in **another tab** go to [Tasmota Timezone Page](https://tasmota.github.io/docs/Timezone-Table/)
+  
+  [Tasmota Timezone Page](https://tasmota.github.io/docs/Timezone-Table/){:target="_blank"}
+  
   Copy the necessary line and execute it in Tools → Console. (NOT berry console). You will see the time changing to your local time.
 
 - Again in console (and dont forget the "backlog")

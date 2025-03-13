@@ -456,7 +456,7 @@ def ttable_combo()
   def webpage_show(idx)
       if !webserver.check_privileged_access() return nil end
       var t = global.('tt'+idx)
-      webserver.content_start("Timetable Settings") # title of the web page
+      webserver.content_start("Timetable Settings" + idx) # title of the web page
       webserver.content_send_style() # standard Tasmota style
       if webserver.arg_size()==1
         print('arg0=',webserver.arg(0))
@@ -480,14 +480,14 @@ def ttable_combo()
       webserver.content_send('<p style="text-align:center">Local Time (Refresh the page to update) : ')
       webserver.content_send(datetime())
       webserver.content_send('</p>')
-      webserver.content_send('<br><button onclick="location.href=\'/tt?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
-      webserver.content_send('<form action="/tt" id="ttform">')
-      webserver.content_send('<label for="tt">Timetable' .. t.idx ..' (24h format, can be ie 08:50 or 0850) :</label>')
+      webserver.content_send('<br><button onclick="location.href=\'/tt'+idx+'?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
+      webserver.content_send('<form action="/tt'+idx+'" id="ttform">')
+      webserver.content_send('<label for="tt">Timetable ' + idx + ' (24h format, can be ie 08:50 or 0850) :</label>')
       webserver.content_send('<input type="text" id="tt" name="tt" value="'+t.timetable+'"><br><br>')
       webserver.content_send('<label for="dur">Bell duration: (5 or 4.5 etc seconds)</label><input type="text" id="dur" name="dur" value="' .. t.duration .. '"><br><br>')
       webserver.content_send('<label for="ad">Active Days (1-5 means MON-FRI, * means all days)</label><input type="text" id="ad" name="ad" value="' .. t.active_days .. '"><br><br>')
       webserver.content_send('</form>')
-      webserver.content_send('<button type="submit" form="ttform">Save settings</button>')
+      webserver.content_send('<button type="submit" form="ttform">Save settings '+idx+'</button>')
       webserver.content_button(webserver.BUTTON_MAIN)
       webserver.content_stop()
   end
@@ -508,7 +508,7 @@ def ttable_combo()
       end
 
       def web_add_main_button()
-          webserver.content_send('<button onclick="location.href=\'/tt\'">School Timer'..self.idx..'</button>')
+          webserver.content_send('<button onclick="location.href=\'/tt' + self.idx + '\'">School Timer ' + self.idx + '</button>')
       end
 
       def web_add_handler()

@@ -39,24 +39,19 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 - When connected, click Visit Device.
   Write down the IP address. This is the web page of the tasmota system. It is accessible from the LAN.
   
-  From now on we are working via the browser. We will need serial connection again when we want to change Wifi.
+- From now on we are working via the browser. We will use a serial connection, only when we want to change Wifi.
 
 - Set the TimeZone/Dayligtht settings.
-
-  To do this, in **another tab** go to [Tasmota Timezone Page](https://tasmota.github.io/docs/Timezone-Table/)
-  
-  [Tasmota Timezone Page](https://tasmota.github.io/docs/Timezone-Table/){:target="_blank"}
-  
-  Copy the necessary line and execute it in Tools → Console. (NOT berry console). You will see the time changing to your local time.
+  Go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/). Copy the necessary line and execute it in Tools → Console. (NOT berry console). You will see the time changing to your local time.
 
 - Again in console (and dont forget the "backlog")
   ```berry
   backlog hostname school; SetOption55 1; restart 1;
   ```
   On boot messages, you will see something like
-  ```
-  mDN: Initialized 'school.local'
-  ```
+  
+  mDN: Initialized "school.local"
+  
   From now on you can type "school.local" in the browser address bar instead of the IP. This is not very reliable unfortunatelly, keep also the IP.
 
 ###  Step 3. Pin configuration
@@ -74,7 +69,7 @@ GPIO 32 -> I2C SCL
 GPIO 15(D15) -> LedLink_i
 # GND is next to D15
 ```
-WARNING the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on. 
+WARNING the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on in "autoexec.be"
 
 ### Step 4. Loading the DS3231 real time clock driver.
 Without this it is easy for the module to lose the time, on power outages. Installation instructions on:
@@ -109,24 +104,22 @@ Now you have the "timetable.be" script installed.
 Without leaving the Berry Console, write:
 
 ```berry
-TTPIN = 4
+TTPIN = 4 ### pin D4
 load('timetable.be')
 ```
 
-You will see the timetable starting successfully using some defaults. To be started on boot, it needs to be in "autoexec.be"
+You will see the timetable starting using some defaults. To be started on every boot, it needs to be in "autoexec.be"
 
-tools → Manage filesystem → edit "autoexec.be" (the white icon with the pencil). Or create it if does not exist.
+tools → Manage filesystem → edit "autoexec.be" (the white icon with the pencil). You have probably already created the file in DS3231 step, otherwise create it now.
 
-Append the 2 lines.
+Append thelines.
 ```berry
 load('ds3231') # From the DS3231 step
 TTPIN = 4
 load('timetable')
 ```
 
-restart the module, and check the console messages.
-
-Go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load.
+Restart the module and go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load.
 
 ### Step 6. Collecting the rest of the hardware.
 PHOTO-TODO

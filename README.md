@@ -20,7 +20,7 @@ DO NOT DOWNLOAD ANYTHING YET THERE Are SOME MODIFICATIONS TO BE DONE mainly on e
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay, and a quality USB **DATA** cable.
+The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay,An optional LED (they can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
 
 Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info.
 
@@ -57,7 +57,7 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 ###  Step 3. Pin configuration
 WebBrowser → IP address (or school.local) → Configure → Module
 
-For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D14 and D27 to power the DS3231(needs only about 4mA).
+For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D25 and D26 to power the DS3231(needs only about 4mA).
 ```
 #### For the DS3231 module #########
 GPIO 26 -> OutputLow (acts as GND)
@@ -72,8 +72,10 @@ GPIO 15(D15) -> LedLink_i
 WARNING the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on in "autoexec.be"
 
 ### Step 4. Loading the DS3231 real time clock driver.
-Without this it is easy for the module to lose the time, on power outages. Installation instructions on:
+Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. Installation instructions on:
+
 [DS3231 Driver](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
+
 Basically you save the driver "ds3231.be" in the tasmota filesystem, and you load it automatically using "autoexec.be"
 
 ### Step 5. Berry script installation ("timetable.be")
@@ -105,7 +107,7 @@ Without leaving the Berry Console, write:
 
 ```berry
 TTPIN = 4 ### pin D4
-load('timetable.be')
+load('timetable')
 ```
 
 You will see the timetable starting using some defaults. To be started on every boot, it needs to be in "autoexec.be"
@@ -119,14 +121,14 @@ TTPIN = 4
 load('timetable')
 ```
 
-Restart the module and go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load.
+Restart the module and go with the browser to the same IP address(or school.local) as previously. You will see a "Timetable" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). MON-FRI also works. Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load. Before going to the next step be sure the timer is working as expected.
 
 ### Step 6. Collecting the rest of the hardware.
 PHOTO-TODO
 - A project enclosure, better to be air tight, to prevent moisture and dust. 
 - A few jumper cables. Use only unused cables. Even slightly used cables can be ureliable.
 - Alternativelly a screw terminal breakout and simple copper wires.
-- A usb charger. No need to be powerful, but it helps to be of some quality, for example from an old phone.
+- A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone.
 - A connector for the bell connection. PHOTO TODO
 - ON/OFF switch
 - Dual tape, hot glue, or anything you prefer to fix things inside the box.
@@ -140,7 +142,7 @@ Connect the USB cable with the PC and check the functionality of the module. If 
 ### Step 8. Protect the web interface from anauthorized access
 Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a safe place.
 
-### Step 9. Intall the electrical connector (near the manual bell switch)
+### Step 9. Install the electrical connector (near the manual bell switch)
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
 
 PHOTO
@@ -148,11 +150,11 @@ Most probably the school already has a circuit for the bell, and a wall button f
 Or if you are sure you can completely remove the old timer, use the 2 wires for our Relay.
 TODO
 Plug the Timer connector in the newly installed connector.
-Make sure that there is a wall electrical socket for the usb charger **DEDICATED** for this purpose. You do not want someone unpluging the timer, to charge a mobile phone or whatever.
+Make sure that there is a wall electrical socket for the usb charger **DEDICATED** for this purpose. You do not want someone unpluging the timer, to charge a phone or whatever.
 
 ### Step 10. Reconfigure WIFI to use the new AccessPoint.
 
-**Plug the USB cable to you laptop** (chromium based browser) and type "tasmota installer" We will use the same tasmota installer.
+**Plug the USB cable to your computer** (chromium based browser) and type "tasmota installer" We will use the same tasmota installer.
 type Connect and choose the port.
 "Configure Wifi" does not always work.
 
@@ -160,13 +162,14 @@ The most reliable way is to use the Logs & Console
 ```sh
 backlog ssid1 MyNewAP; password1 MyNewPassword
 ```
+Instead of the browser you can use any serial terminal like gtketrm however in this case ENTER does not always work, the most succesfull keypress is Ctrl-J
 
-Wait the module to reset and wait to see if connection works.
+Wait the module to reset and wait to see if connection works. You will see the new IP(the school.local should also work)
 
-Unplug the cable from the laptop and use the USB charger.
+Unplug the cable from the laptop and use the USB charger. Connect to the Timer using the tasmota web interface (IP or school.local) You can review the settings of the timer, as from now on is ready for work.
 
 ### Last Step. Document the recovery process
-Document to a paper and/or to an online note app(keep etc.) how to recover from a missing/changed Access Point.
+Document to a paper and/or to an app, how to recover from a missing/changed Access Point.
 
 Congratulations !
 

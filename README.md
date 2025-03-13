@@ -43,13 +43,8 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 
 - Set the TimeZone/Dayligtht settings.
 
-  To do this, in **another tab** go to
-
-  https://tasmota.github.io/docs/Timezone-Table/
-  
-  Copy the necessary line and execute it in Tools → Console. (NOT berry console)
-
-  You will see the time changing to your local time.
+  To do this, in **another tab** go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/)
+  Copy the necessary line and execute it in Tools → Console. (NOT berry console). You will see the time changing to your local time.
 
 - Again in console (and dont forget the "backlog")
   ```berry

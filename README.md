@@ -20,9 +20,9 @@ WARNING SOME SECTIONS ARE NOT READY YET, IN A FEW DAYS THIS MESSAGE WILL BE REMO
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 devkit board, a DS3231 module a Solid state relay,An optional LED (they can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
+The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 board, a DS3231 module a Solid state relay, 1 or 2 optional LEDs (they can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
 
-Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info.
+Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info. Although unlikely both can have failures so it is not a bad idea to have a spear SSR/relay. There are rumors on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells, simply because the thyristor inside is bigger. Probably a varistor will help, I leave this for the future.
 
 ### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
@@ -42,32 +42,36 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 - From now on we are working via the browser. We will use a serial connection, only when we want to change Wifi.
 
 - Set the TimeZone/Dayligtht settings.
-  Go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/). Copy the necessary line and execute it in Tools → Console. (NOT berry console). You will see the time changing to your local time.
+  Go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/). Copy the necessary line and execute it in Tools → Console. (NOT berry console).
+
+  execute the "time" command
+ 
+  You will see the time changing to your local time.
 
 - Again in console (and dont forget the "backlog")
   ```berry
-  backlog hostname school; SetOption55 1; restart 1;
+  backlog hostname school; SetOption55 1
   ```
-  On boot messages, you will see something like
+  The module will restart automatically and on boot messages(web console), you will see something like
   
   mDN: Initialized "school.local"
   
   From now on you can type "school.local" in the browser address bar instead of the IP. This is not very reliable unfortunatelly, keep also the IP.
 
 ###  Step 3. Pin configuration
-WebBrowser → IP address (or school.local) → Configure → Module
+WebBrowser → IP address (or school.local) → Configuration → Module
 
 For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D25 and D26 to power the DS3231(needs only about 4mA).
 ```
 #### For the DS3231 module #########
-GPIO 26 -> OutputLow (acts as GND)
 GPIO 25 -> OutputHi (acts as VCC)
-GPIO 33 -> I2C SDA
+GPIO 26 -> OutputLow (acts as GND)
 GPIO 32 -> I2C SCL
+GPIO 33 -> I2C SDA (Be careful NOT SPI SDA)
 
 #### For the indicating LED #####
-GPIO 15(D15) -> LedLink_i
-# GND is next to D15
+GPIO 13(D13) -> LedLink_i
+# GND is next to D13
 ```
 WARNING the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on in "autoexec.be"
 
@@ -121,7 +125,7 @@ TTPIN = 4
 load('timetable')
 ```
 
-Restart the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). MON-FRI also works. Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load. This is important because the load is 230/110V and we want to connect it only the last minute at the installation site. Before going to the next step be sure the timer is working as expected.
+Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). MON-FRI also works. Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load. This is important because the load is 230/110V and we want to connect it only the last minute at the installation site. Before going to the next step be sure the timer is working as expected.
 
 ### Step 6. Collecting the rest of the hardware.
 PHOTO-TODO

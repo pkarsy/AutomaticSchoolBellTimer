@@ -43,14 +43,14 @@ def ttable_combo()
   #
   import strict
   import string
-  import gpio
+  #import gpio
   import json
   #
   var title='TTABLE :'
-  var IDXS=['','2','3','4','5']
+  var IDXS=['1','2','3','4','5']
   
   def idxcheck(idx)
-    if idx==nil || idx==0 || idx==1 idx='' end
+    if idx==nil || idx==0 || idx==1 idx='1' end
     idx=str(idx)
     if IDXS.find(idx)==nil
       return -1
@@ -120,7 +120,7 @@ def ttable_combo()
 
   class Timetable
     #
-    var pin # this is the physical GPIO pin
+    #var pin # this is the relay number in tasmota config
     var idx # controls the topic used tt/topic/bell+idx etc
     var disabled # disables all functionality bell, timers etc
     #
@@ -133,14 +133,16 @@ def ttable_combo()
     static default_duration = 6.0
     static default_active_days = '1-5'
     
-    def init(pin, idx)
+    def init(idx)
+      print("init", idx)
       self.disabled = false
-      self.pin = pin
+      #self.pin = pin
       self.idx = idx
       #
-      print('pin =', self.pin)
-      if idx != '' print('idx =', self.idx) end
-      gpio.pin_mode(self.pin, gpio.OUTPUT)
+      #print('relay =', self.pin)
+      #if idx != '' print('idx =', self.idx) end
+      print('idx =', self.idx)
+      # gpio.pin_mode(self.pin, gpio.OUTPUT)
       ##
       do
         var settings = self.fetch_disk_settings(true) # true = print verbose messages
@@ -151,6 +153,7 @@ def ttable_combo()
       end
       #
       self.install_cron_entries() # we can do this as timetable amd active_days are loaded
+      self.set_pulsetime()
       #
       print('INIT OK')
       
@@ -162,7 +165,7 @@ def ttable_combo()
       var saveflag = false
       var j # the settings as a map
       try
-        var fn = '/.tt' + self.idx + '.json'
+        var fn = '/.tt' .. self.idx .. '.json'
         if p print('Opening "' .. fn .. '" to get the settings') end
         var f = open(fn)
         var data = f.read()
@@ -255,7 +258,7 @@ def ttable_combo()
     def save_settings_unc(dur, tt, ad)
       var j = {'duration':dur, 'timetable':tt, 'active_days':ad}
       try
-        var f = open('/.tt' + self.idx + '.json', 'w')
+        var f = open('/.tt' .. self.idx .. '.json', 'w')
         f.write(json.dump(j))
         f.close()
         print("Saved settings to flash")
@@ -292,7 +295,7 @@ def ttable_combo()
 
     def cron_id(c)
       # Used to create a unique name for every cronjob
-      return 'tt'+self.idx + '-' + c
+      return 'tt' .. self.idx .. '-' .. c
     end
 
     def bell_on_with_check()
@@ -312,19 +315,21 @@ def ttable_combo()
         print('The bell is disabled')
         return
       end
-      if gpio.digital_read(self.pin) == 0 # return end 
-        gpio.digital_write(self.pin, 1)
-        tasmota.remove_timer(self)
-        tasmota.set_timer( int(self.duration*1000) , /->self.bell_off() , self )
-      end
-      print('The bell is ON')
+      #if gpio.digital_read(self.pin) == 0 # return end 
+      #  gpio.digital_write(self.pin, 1)
+      #  tasmota.remove_timer(self)
+      #  tasmota.set_timer( int(self.duration*1000) , /->self.bell_off() , self )
+      #end
+      #print('The bell is ON')
+      tasmota.set_power(self.idx-1, true)
     end
 
     def bell_off()
       if self.disabled print('bell_off: disabled') return end
-      tasmota.remove_timer(self)
-      gpio.digital_write(self.pin, 0)
-      print('The bell is OFF')
+      #tasmota.remove_timer(self)
+      #gpio.digital_write(self.pin, 0)
+      #print('The bell is OFF')
+      tasmota.set_power(self.idx-1, false)
     end
 
     def bell_onoff(x)
@@ -366,8 +371,27 @@ def ttable_combo()
         return
       end
       self.duration = dur
+      self.set_pulsetime()
       self.save_settings()
       print('New duartion', dur, 'saved')
+    end
+
+    def set_pulsetime()
+      if self.duration<1.0
+        #pulsetime(10)
+        tasmota.cmd("pulsetime"..self.idx.." 10")
+        return
+      end
+      if self.duration<=11.1
+        var p = int(self.duration *10+0.5)
+        tasmota.cmd("pulsetime"..self.idx.." "..p)
+        return
+      end
+      var duration=int(self.duration+0.5)
+      if duration<12
+        duration=12
+      end
+      tasmota.cmd("pulsetime"..self.idx.." "..(duration+100))      
     end
 
     def set_timetable(tt)
@@ -420,7 +444,7 @@ def ttable_combo()
     end
     
     def disable() # Releases recourses to be garbage collected by BerryVM
-      if global.('tt'+self.idx) != self return end
+      if global.('tt' .. self.idx) != self return end
       self.remove_cron_entries()
       self.bell_off()
       self.disabled = true
@@ -433,30 +457,30 @@ def ttable_combo()
 
   end # class timetable
 
-  def tt_generator(pin, idx)
-    idx = idxcheck(idx)
-    if idx==-1
-      print('Wrong index, must be ', IDXS)
+  def tt_generator(idx)
+    #idx = idxcheck(idx)
+    #if idx==-1
+    #  print('Wrong index, must be ', IDXS)
+    #  return
+    #end
+    if global.('tt' .. idx) != nil
+      print('global var', 'tt' .. idx, 'is used')
       return
     end
-    if global.('tt'+idx) != nil
-      print('global var', 'tt'+idx, 'is used')
-      return
-    end
-    if type(pin)!='int' || pin<0 || pin>30
-      print(title,'Wrong PIN, 0-30 accepted, be careful many pins are unusable', pin)
-      return
-    end
-    print('Creating timetable :', 'tt'+idx)
-    global.('tt'+idx) = Timetable(pin , idx)
+    #if type(pin)!='int' || pin<0 || pin>30
+    #  print(title,'Wrong PIN, 0-30 accepted, be careful many pins are unusable', pin)
+    #  return
+    #end
+    print('Creating timetable :', 'tt'..idx)
+    global.('tt'..idx) = Timetable(idx)
   end # tt_generator
 
   import webserver
 
   def webpage_show(idx)
       if !webserver.check_privileged_access() return nil end
-      var t = global.('tt'+idx)
-      webserver.content_start("Timetable Settings" + idx) # title of the web page
+      var t = global.('tt'..idx)
+      webserver.content_start("Timetable Settings"..idx) # title of the web page
       webserver.content_send_style() # standard Tasmota style
       if webserver.arg_size()==1
         print('arg0=',webserver.arg(0))
@@ -480,14 +504,14 @@ def ttable_combo()
       webserver.content_send('<p style="text-align:center">Local Time (Refresh the page to update) : ')
       webserver.content_send(datetime())
       webserver.content_send('</p>')
-      webserver.content_send('<br><button onclick="location.href=\'/tt'+idx+'?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
-      webserver.content_send('<form action="/tt'+idx+'" id="ttform">')
-      webserver.content_send('<label for="tt">Timetable ' + idx + ' (24h format, can be ie 08:50 or 0850) :</label>')
+      webserver.content_send('<br><button onclick="location.href=\'/tt' .. idx .. '?bell=1\'" style="background-color:red;">Ring the bell</button><br><br>')
+      webserver.content_send('<form action="/tt' .. idx .. '" id="ttform">')
+      webserver.content_send('<label for="tt">Timetable ' .. idx .. ' (24h format, can be ie 08:50 or 0850) :</label>')
       webserver.content_send('<input type="text" id="tt" name="tt" value="'+t.timetable+'"><br><br>')
       webserver.content_send('<label for="dur">Bell duration: (5 or 4.5 etc seconds)</label><input type="text" id="dur" name="dur" value="' .. t.duration .. '"><br><br>')
       webserver.content_send('<label for="ad">Active Days (1-5 means MON-FRI, * means all days)</label><input type="text" id="ad" name="ad" value="' .. t.active_days .. '"><br><br>')
       webserver.content_send('</form>')
-      webserver.content_send('<button type="submit" form="ttform">Save settings '+idx+'</button>')
+      webserver.content_send('<button type="submit" form="ttform">Save settings ' .. idx .. '</button>')
       webserver.content_button(webserver.BUTTON_MAIN)
       webserver.content_stop()
   end
@@ -498,7 +522,7 @@ def ttable_combo()
       def init(idx)
           self.idx = idx
           if global.('tt'+self.idx)==nil
-            print('Error : timetable tt'+self.idx, 'not found')
+            print('Error : timetable tt' .. self.idx, 'not found')
             return
           end
           tasmota.add_driver(self)
@@ -508,16 +532,16 @@ def ttable_combo()
       end
 
       def web_add_main_button()
-          webserver.content_send('<button onclick="location.href=\'/tt' + self.idx + '\'">School Timer ' + self.idx + '</button><br><br>')
+          webserver.content_send('<button onclick="location.href=\'/tt' .. self.idx .. '\'">School Timer ' .. self.idx .. '</button><br><br>')
       end
 
       def web_add_handler()
-        webserver.on('/tt'+self.idx, /-> webpage_show(self.idx))
-        print('Created web page for tt'+self.idx)
+        webserver.on('/tt' .. self.idx, /-> webpage_show(self.idx))
+        print('Created web page for tt' .. self.idx)
       end
 
       def disable()
-          webserver.on('/tt'+self.idx, / -> nil)
+          webserver.on('/tt' .. self.idx, / -> nil)
           tasmota.remove_driver(self)
       end
 
@@ -529,17 +553,19 @@ def ttable_combo()
   def web_generator(idx)
     idx = idxcheck(idx)
     if idx==-1 print('Wrong index, must be ', IDXS) return end
-    if global.('tt'+idx) == nil print('Timetable is missing, not creating web interface') return end
-    if global.('ttweb'+idx) != nil print('ttweb'+idx,'already exists, not creating web') return end
-    global.('ttweb'+idx) = TimetableWeb(idx)
+    if global.('tt' .. idx) == nil print('Timetable is missing, not creating web interface') return end
+    if global.('ttweb' .. idx) != nil print('ttweb' .. idx,'already exists, not creating web') return end
+    global.('ttweb' .. idx) = TimetableWeb(idx)
   end
 
-  for idx:IDXS
-    if global.('TTPIN'+idx) != nil
-      tt_generator(global.('TTPIN'+idx), idx)
-      web_generator(idx)
-    end
-  end
+  #for idx:IDXS
+  #  if global.('TTPIN'+idx) != nil
+  #    tt_generator(global.('TTPIN'+idx), idx)
+  #    web_generator(idx)
+  #  end
+  #end
+  tt_generator(1)
+  web_generator(1)
 
 end # ttable_combo()
 

@@ -39,7 +39,8 @@ end
 
 # encapsulates vars, strings, helper functions
 # and the main class
-def ttable_combo()
+#def ttable_combo()
+do
   #
   import strict
   import string
@@ -558,16 +559,19 @@ def ttable_combo()
     global.('ttweb' .. idx) = TimetableWeb(idx)
   end
 
+  def start_timetable(idx)
+    tt_generator(idx)
+    web_generator(idx)
+  end
   #for idx:IDXS
   #  if global.('TTPIN'+idx) != nil
   #    tt_generator(global.('TTPIN'+idx), idx)
   #    web_generator(idx)
   #  end
   #end
-  tt_generator(1)
-  web_generator(1)
+  global.start_timetable = 20
 
 end # ttable_combo()
 
-ttable_combo()
-ttable_combo = nil #  we cannot call ttable_combo() again
+#ttable_combo()
+#ttable_combo = nil #  we cannot call ttable_combo() again

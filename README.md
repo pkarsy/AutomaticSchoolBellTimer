@@ -1,6 +1,9 @@
 # Automatic School Bell Timer
 WARNING SOME SECTIONS ARE NOT READY YET, IN A FEW DAYS THIS MESSAGE WILL BE REMOVED
 
+# gia na min sozei tin katastasi ton PIN se kathe ON OFF
+SetOption0 0
+
 ![SchoolTimer](timer.png)
 
 ### WARNING

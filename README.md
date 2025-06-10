@@ -182,20 +182,17 @@ PHOTO
 Most probably the school already has a circuit for the bell, and a wall button for manual ringing. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if exists), just disable it.
 Or if you are sure you can completely remove the old timer, use the 2 wires for our Relay.
 TODO
-Plug the Timer connector in the newly installed connector.
-Make sure that there is a wall electrical socket for the usb charger **DEDICATED** for this purpose. You do not want someone unpluging the timer, to charge a phone or whatever.
 
 ### Step 10. Reconfigure WIFI to use the new AccessPoint.
 
-**Plug the USB cable to your computer** (chromium based browser) and type "tasmota installer" We will use the same tasmota installer.
-type Connect and choose the port.
+**Plug the USB cable to your computer** (chromium based browser) and use the same tasmota installer.
 "Configure Wifi" does not always work.
 
-The most reliable way is to use the Logs & Console
+The most reliable way is to use the "Logs & Console"
 ```sh
 backlog ssid1 MyNewAP; password1 MyNewPassword
 ```
-Instead of the browser you can use any serial terminal like gtketrm however in this case ENTER does not always work, the most succesfull keypress is Ctrl-J
+Alternatively you can use a serial terminal like gtketrm, however in this case, instead of ENTER you may need Ctrl-J
 
 Wait the module to reset and wait to see if connection works. You will see the new IP(the school.local should also work)
 
@@ -209,12 +206,12 @@ Congratulations !
 **############## Optional topics, some of them may be of interest to you. ##############**
 
 ### How to power OFF the ESP32
-Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the Relay.
+Unplug the USB charger. The ON/OFF button as we have seen, only diconnects the Relay output.
 
 ### More than 1 timetable/bells
 TODO NOT READY YET
 ```
-start_timetable(2)
+global.start_timetable(2)
 ```
 The second timetable can be (for example) an additional class on Friday afternoon.
 

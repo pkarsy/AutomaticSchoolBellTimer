@@ -359,7 +359,7 @@ do
         end
       end
       dur = real(dur)
-      if dur < 0 dur = 0 end
+      if dur < 1 dur = 1 end # do not allow the duration to be 0
       if dur > 15 dur = 15 end # Maximum 15 seconds, no need for more
       dur = int(dur*10+0.5)*1.0/10 # we need 1 decimal place maximum
       return dur

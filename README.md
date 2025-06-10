@@ -22,9 +22,8 @@ Notice: Some sections are not ready yet, for example some photos and some instru
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 board, a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
-
-Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info. Although unlikely, both can have failures so it is not a bad idea to have a spear SSR/relay. There are rumors on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay using a TVS diode.
+The instructions and the pinout are for the DEVkit-30pin/38 pin boards (ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the board, a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
+For the software installation/testing you can replace temprarilly the Relay with a LED. Even if you go directly for the SSR **do not connect any mains load to it** Almost all have a led buildin so you can know when it is activated. See the section **Relays and SSR** for more info.
 
 ### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
@@ -50,10 +49,10 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
  
   You will see the time changing to your local time.
 
-- Again in console (and dont forget the "backlog")
+- Again in console (and dont forget the "backlog"), various important settings
   ```berry
   
-  backlog SetOption0 0; hostname school; SetOption55 1
+  backlog SetOption0 0; hostname school; SetOption55 1; SetOption65 1
   ```
   The module will restart automatically and on boot messages(web console), you will see something like
   
@@ -209,42 +208,21 @@ Congratulations !
 
 **############## Optional topics, some of them may be of interest to you. ##############**
 
-### More responsive Web Interface
-Console(Web or Serial):
-```sh
-backlog sleep 0; restart 1;
-```
-the module draws more current but the current is generally very small. (40mA vs 70mA on loli32 lite).
-
 ### How to power OFF the ESP32
 Unplug the USB charger. The ON/OFF button as we have seen, only disables the output of the Relay.
 
-### How to disable the bell by software.
-**DO NOT DO THIS.** The timer should be used by anyone from the personell. Use the ON/OFF button for this task. If you really insist on doing this by software, set the duration to 0. The ON/OFF button will not have any effect of course if duration==0.
-
 ### More than 1 timetable/bells
-in autoexec.be we write
-```sh
-TTPIN = 4
-TTPIN2 = 4 # Can be the same (= the same bell) or different pin (= different SSR and Bell)
-load('timetable')
+TODO NOT READY YET
+```
+start_timetable(2)
 ```
 The second timetable can be (for example) an additional class on Friday afternoon.
-
-TTPIN3 TTPIN4 TTPIN5 also work (highly unlikely that you ever need them).
 
 ### No Manual "RING" button ?
 This is the job of a wall button, indepedent of our timer.
 
-### Disable Device Recovery (Recommended)
-A generally usefull function, however it can result in unexplained device reset, if the wall power is unreliable.
-Go to Tools → Console
-```sh
-backlog SetOption65 1; restart 1;
-```
-
 ### MQTT server, optional but useful for debugging and remote control
-There are a lot of online MQTT servers free and paid and may you prefer this instead of hosting your own. Examples are (there are more):
+There are a lot of online MQTT servers free and paid and you may prefer them instead of hosting your own. Examples are (there are more):
 - hivemqtt.com
 - flespi.com
 
@@ -267,7 +245,7 @@ after restart paste the following commands, modified of course for your MQTT ser
 backlog topic school; setoption132 1; SetOption103 1; MqttHost mqtt.hostname.io; MqttPort 8883 ; MqttUser myusername ; MqttPassword mypassword;
 ```
 
-The module will again restart and this time you should see the module connecting and sending status messages to the server. There are lots of things you can do with MQTT but for this specific project you can use the following commands :
+The module will again restart and this time you should see the module connecting and sending status messages to the server.
 
 | publish topic | payload       | action | response topic |
 | ------------- | ------------- | ----- | ------- |
@@ -299,23 +277,23 @@ They are not very convenient for this specific application. Also there are cases
 ### 5Ghz wifi. Currrently not working
 At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time. When the Tasmota system supports 5GHz, for example ESP32-C6, I guess it will be relatively easy to use the new chip.
 
-### Why Tasmota and not an embeded programming language (Arduino, micropython circuitpyton, lua or even ESP-IDF) ?
-Tasmota solves for us some very important aspects of the project:
+### Why Tasmota and not an embeded programming language (Arduino, micropython circuitpyton, lua, ESP-IDF, toit) ?
+Tasmota acts as an operating system and solves for us some very important aspects of the project:
 
-- Network connectivity (this includes WIFI connect and reconnect, optional MQTT client, TLS).
-- Keeping the system time always accurate, using the NTP protocol.
-- A customizable web server, which allows us to create a dedicated configuration page for the timetable.
-- Time Zone and Daylight Time Switching.
+- Network connectivity (this includes WIFI, TLS , optional MQTT client, and of course credentials storage).
+- Keeping the system time accurate, using the NTP protocol.
+- A customizable web server, which allows us to create easily a configuration page.
+- Time Zone and Daylight Time.
 - Easy control of peripherals.
 - filesystem and settings storage.
 - a scripting language, the excellent Berry Language.
 - Easy device connection (DS3231 specifically).
-- An excellent web based installer. No software is needed for installation (only a chrome based browser) and it is working the same on all operating systems.
-- Easy recovery and setting the WIFI credentials using the same tasmota web installer (or any serial terminal if you prefer).
+- An excellent web based installer. No software/programming environment is needed for installation (only a browser) and it is working the same on all operating systems.
+- Easy recovery using the same tasmota web installer (or any serial terminal if you prefer).
 
 ### How Tasmota is getting the time from the Internet.
 This crusial operation is performed by the Tasmota system itself and not by the "timetable.be" script.
-It is using the ubiquous and ultra reliable NTP protocol. The buildin servers just work, so no need to configure anything.
+It is using the ubiquous and ultra reliable NTP protocol. The default servers just work, so no need to configure anything.
 
 ### Using other boards instead of DevKit
 The most important defference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
@@ -333,6 +311,7 @@ The most important defference between boards is the ESP chip. We have 3 options 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
 ### Solid state Relays
+Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay using a TVS diode.
 
 - They work on specific conditions ususally only AC or only DC, and specific voltages. As we are probably talk about mains voltage, you will need a ~230V(or 110) AC relay.
 - They only need a GPIO pin and a GND for control (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)

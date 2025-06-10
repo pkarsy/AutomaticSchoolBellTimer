@@ -2,31 +2,28 @@
 WARNING SOME SECTIONS ARE NOT READY YET
 IN PURTICLAR THE NEW GPIO SYSTEM SO DONT USE FOR A WHILE
 
-# gia na min sozei tin katastasi ton PIN se kathe ON OFF
-SetOption0 0
-
 ![SchoolTimer](timer.png)
 
 ### WARNING
 **WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** Ask a licenced technician to do the mains connection.
 
-### Goals
+### Characteristics
 - Very accurate, using NTP(Network Time Protocol). This also means that the time never needs to be set manually.
 - Time Zone and Automatic Daylight Savings Time.
 - Resistant to Network disconnections and power outages. The module keeps accurate time on such occasions, and only needs to connect the Internet to fix the time drift (less than 1 sec per week without Internet). We use a dedicated DS3231 module(backed by a lithium coin cell) for this.
-- Easy to control via PC or mobile.
-- With the option of MQTT, it can also be monitored and controlled outside of the local network.
-- Ability to use more than 1 timetables even different bells (see dedicated paragraph)
+- Easy configuration via PC or mobile.
 - As few parts as possible, no PCB, and no soldering at all (if we choose an ESP32 board with presoldered headers).
 - Reliable hardware. It is expected to work for years and years to come. The minimal part count and the airtight enclosure is hepling on this.
-- Reliable software. Minimal dependencies on external services. It can tolerate power outages and MONTHS of WIFI anavailability before the time drift becomes noticeable. The CR2032 coin cell will probably work for 10 years and probably more (discharges only when not in mains power). There is no dependency for MQTT server, whom we dont now if it is working or even exists years later (see the dedicated section for MQTT).
+- Reliable software. Minimal dependencies on external services. It can tolerate power outages and MONTHS of WIFI anavailability before the time drift becomes noticeable. The CR2032 coin cell will probably work for 10 years and probably more (discharges only when not in mains power).
 - Very low cost (See the list with materials below)
+- With the **option** of MQTT, it can also be monitored and controlled outside of the local network. Even when enabled, there is still no dependency for MQTT for norman operation. This is important as we dont now if MQTT it is working or even the server exists years later (see the dedicated section).
+- (Rarelly needed) Ability to use more than 1 timetables even different bells. See the dedicated paragraph.
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 board, a DS3231 module a Solid state relay, 1 or 2 optional LEDs (they can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
+The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 board, a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
 
-Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info. Although unlikely both can have failures so it is not a bad idea to have a spear SSR/relay. There are rumors on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells, simply because the thyristor inside is bigger. Probably a varistor will help, I leave this for the future.
+Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info. Although unlikely both can have failures so it is not a bad idea to have a spear SSR/relay. There are rumors on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay.
 
 ### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
@@ -35,15 +32,15 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 
 - Go to https://tasmota.github.io/install/ (Or simply search for ["tasmota intaller"](https://duckduckgo.com/?t=h_&q=tasmota+installer)). Tasmota(english) is the safest option.
 
-- Press the connect button → choose the serial port → check "Erase Device" → Next → Install (a boot button press might needed)
+- Press the connect button → choose the serial port → check "Erase Device" → Next → Install (**a boot button press might needed**)
 - After the installation is complete press Next → Configure WIFI.
 
   Use the current WIFI, even if it is going to be different at the end. When we move to the final location we can change the Access Point.
 
 - When connected, click Visit Device.
-  Write down the IP address. This is the web page of the tasmota system. It is accessible from the LAN.
+  Write down the IP address.It is something like 192.168.1.xx for home routers. This is the web page of the tasmota system. It is accessible from the LAN.
   
-- From now on we are working via the browser. We will use a serial connection, only when we want to change Wifi.
+- **From now on we are working from the browser. We will use a serial connection, only when we want to change Wifi.**
 
 - Set the TimeZone/Dayligtht settings.
   Go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/). Copy the necessary line and execute it in Tools → Console. (NOT berry console).
@@ -54,7 +51,8 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 
 - Again in console (and dont forget the "backlog")
   ```berry
-  backlog hostname school; SetOption55 1
+  
+  backlog SetOption0 0; hostname school; SetOption55 1
   ```
   The module will restart automatically and on boot messages(web console), you will see something like
   
@@ -68,23 +66,27 @@ WebBrowser → IP address (or school.local) → Configuration → Module
 For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D25 and D26 to power the DS3231(needs only about 4mA).
 ```
 #### For the DS3231 module #########
-GPIO 25 -> OutputHi (acts as VCC)
-GPIO 26 -> OutputLow (acts as GND)
-GPIO 32 -> I2C SCL
-GPIO 33 -> I2C SDA (Be careful NOT SPI SDA)
+GPIO 25 → OutputHi (acts as VCC)
+GPIO 26 → OutputLow (acts as GND)
+GPIO 32 → I2C SCL
+GPIO 33 → I2C SDA (Be careful NOT SPI SDA)
 
-#### For the indicating LED #####
-GPIO 13(D13) -> LedLink_i
+#### For the indicating LED (Optional) #####
+GPIO 13(D13) → LedLink_i
 # GND is next to D13
+## Finally for the SSR/Relay controlling the LED
+GPIO 4 → Relay(1)
 ```
-WARNING the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on in "autoexec.be"
+Save the settings and the module will reboot. If you have installed the LED you will see it blinking until the boot process is complete. When the module connects to the wife, the LED will stay active indicating everything is OK.
+DELETE TODO the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on in "autoexec.be"
 
 ### Step 4. Loading the DS3231 real time clock driver.
 Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. Installation instructions on:
 
 [DS3231 Driver](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
 
-Basically you save the driver "ds3231.be" in the tasmota filesystem, and you load it automatically using "autoexec.be"
+Basically you save the driver "ds3231.be" in the tasmota filesystem, and you load it automatically from "autoexec.be".
+Do a reboot to be sure the driver is loaded at startup. In console massages you will see a "found DS3231 chip".
 
 ### Step 5. Berry script installation ("timetable.be")
 This program is implementing the timer engine and the web configuration page.
@@ -114,7 +116,7 @@ Now you have the "timetable.be" script installed.
 Without leaving the Berry Console, write:
 
 ```berry
-TTPIN = 4 ### pin D4
+#TTPIN = 4 ### pin D4
 load('timetable')
 ```
 

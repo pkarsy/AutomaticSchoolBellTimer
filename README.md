@@ -23,7 +23,7 @@ IN PURTICLAR THE NEW GPIO SYSTEM SO DONT USE FOR A WHILE
 ### Step 1. Connect the electronic parts just like the above schematic.
 The instructions and the pinout are for the DEVkit-30pin board(is ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the ESP32 board, a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
 
-Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info. Although unlikely both can have failures so it is not a bad idea to have a spear SSR/relay. There are rumors on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay.
+Note that I only have tested (and I have tested it for years) the project with o [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). See the section **Relays and SSR** for more info. Although unlikely, both can have failures so it is not a bad idea to have a spear SSR/relay. There are rumors on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay using a TVS diode.
 
 ### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
@@ -77,23 +77,45 @@ GPIO 13(D13) → LedLink_i
 ## Finally for the SSR/Relay controlling the LED
 GPIO 4 → Relay(1)
 ```
-Save the settings and the module will reboot. If you have installed the LED you will see it blinking until the boot process is complete. When the module connects to the wife, the LED will stay active indicating everything is OK.
-DELETE TODO the pin of the SSR(D4) is NOT set in the Tasmota configuration. We will set this later on in "autoexec.be"
+Save the settings and the module will reboot. If you have installed the LED you will see it blinking until the boot process is complete. When the module connects to the Wifi, the LED will stay active indicating everything is OK.
 
 ### Step 4. Loading the DS3231 real time clock driver.
 Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. Installation instructions on:
 
 [DS3231 Driver](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
 
-Basically you save the driver "ds3231.be" in the tasmota filesystem, and you load it automatically from "autoexec.be".
-Do a reboot to be sure the driver is loaded at startup. In console massages you will see a "found DS3231 chip".
+There are intructions there but for convenience I include them here.
+
+WebBrowser → IP address (or school.local) → tools → Berry scripting console
+
+Paste and execute the following code:
+```berry
+do
+  var fn = 'ds3231.be'
+  var cl = webclient()
+  var url = 'https://raw.githubusercontent.com/pkarsy/TasmotaBerryTime/refs/heads/main/ds3231/' + fn
+  cl.begin(url)
+  if cl.GET() != 200 print('Error getting', fn) return end
+  var s = cl.get_string()
+  cl.close()
+  var f = open('/'+fn, 'w')
+  f.write(s)
+  f.close()
+  print('Installed', fn)
+end
+```
+
+Now you have the driver "ds3231.be" in the tasmota filesystem.
+whithout leaving the console
+```berry
+load('ds3231')
+```
+and hopefully you will see the driver finding the module.
 
 ### Step 5. Berry script installation ("timetable.be")
 This program is implementing the timer engine and the web configuration page.
 
-WebBrowser → IP address (or school.local) → tools → Berry scripting console
-
-paste and execute the following code:
+Again in Berry console paste and execute the following code:
 
 ```berry
 do
@@ -116,8 +138,8 @@ Now you have the "timetable.be" script installed.
 Without leaving the Berry Console, write:
 
 ```berry
-#TTPIN = 4 ### pin D4
 load('timetable')
+global.start_timetable(1)
 ```
 
 You will see the timetable starting, using some defaults. To be started on every boot, it needs to be in "autoexec.be"
@@ -127,11 +149,12 @@ tools → Manage filesystem → edit "autoexec.be" (the white icon with the penc
 Append thelines.
 ```berry
 load('ds3231') # From the DS3231 step
-TTPIN = 4
+
 load('timetable')
+global.start_timetable(1)
 ```
 
-Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 (Monday-Friday). MON-FRI also works. Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load. This is important because the load is 230/110V and we want to connect it only the last minute at the installation site. Before going to the next step be sure the timer is working as expected.
+Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 or MON-FRI. Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load. This is important because the load is 230/110V and we want to connect it only the last minute at the installation site. Before going to the next step be sure the timer is working as expected.
 
 ### Step 6. Collecting the rest of the hardware.
 PHOTO-TODO

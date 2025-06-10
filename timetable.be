@@ -569,7 +569,7 @@ do
   #    web_generator(idx)
   #  end
   #end
-  global.start_timetable = 20
+  global.start_timetable = start_timetable
 
 end # ttable_combo()
 

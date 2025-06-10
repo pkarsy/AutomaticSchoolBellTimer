@@ -1,6 +1,7 @@
 # Automatic School Bell Timer
-WARNING SOME SECTIONS ARE NOT READY YET
-IN PURTICLAR THE NEW GPIO SYSTEM SO DONT USE FOR A WHILE
+
+Notice: Some sections are not ready yet, for example some photos and some instructions for the hardware assembly, but generally the reader should be able to build the hardware. I will try to complete the page as soon as I can.
+
 
 ![SchoolTimer](timer.png)
 

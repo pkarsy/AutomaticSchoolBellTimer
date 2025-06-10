@@ -563,15 +563,10 @@ do
     tt_generator(idx)
     web_generator(idx)
   end
-  #for idx:IDXS
-  #  if global.('TTPIN'+idx) != nil
-  #    tt_generator(global.('TTPIN'+idx), idx)
-  #    web_generator(idx)
-  #  end
-  #end
+
+  start_timetable(1)
+
   global.start_timetable = start_timetable
 
-end # ttable_combo()
+end
 
-#ttable_combo()
-#ttable_combo = nil #  we cannot call ttable_combo() again

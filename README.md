@@ -80,11 +80,9 @@ GPIO 4 → Relay(1)
 Save the settings and the module will reboot. If you have installed the LED you will see it blinking until the boot process is complete. When the module connects to the Wifi, the LED will stay active indicating everything is OK.
 
 ### Step 4. Loading the DS3231 real time clock driver.
-Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. Installation instructions on:
+Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. The driver lives in this [githun page](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
 
-[DS3231 Driver](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
-
-There are intructions there but for convenience I include them here.
+For convenience I include the installation instructions here:
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 
@@ -142,16 +140,18 @@ load('timetable')
 global.start_timetable(1)
 ```
 
-You will see the timetable starting, using some defaults. To be started on every boot, it needs to be in "autoexec.be"
+You will see the timetable starting, using some defaults.
 
-tools → Manage filesystem → edit "autoexec.be" (the white icon with the pencil). You have probably already created the file in DS3231 step, otherwise create it now.
+To be started on every boot, it needs to be in "autoexec.be"
 
-Append thelines.
+tools → Manage filesystem 
+Edit "autoexec.be" **(the white icon with the pencil)** if the file exists, otherwise create it ypurself.
+
+Append the lines.
 ```berry
-load('ds3231') # From the DS3231 step
+load('ds3231') # for the DS3231
 
-load('timetable')
-global.start_timetable(1)
+load('timetable') # for the timetable
 ```
 
 Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 or MON-FRI. Note that most/all Relays and SSRs have a LED so we can visually check whether they activated, without connecting the load. This is important because the load is 230/110V and we want to connect it only the last minute at the installation site. Before going to the next step be sure the timer is working as expected.

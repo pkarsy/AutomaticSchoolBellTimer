@@ -246,13 +246,13 @@ The module will again restart and this time you should see the module connecting
 
 | publish topic | payload       | action | response topic |
 | ------------- | ------------- | ----- | ------- |
-| cmnd/school/br | tt.bell_on() | rings the bell | stat/school/RESULT |
-| cmnd/school/br | tt.timetable | shows the timetable | stat/school/RESULT |
-| cmnd/school/br | tt.set_timetable("1000 1045")| sets the timetable | stat/school/RESULT |
-| cmnd/school/br | tt.duration | shows the duration | stat/school/RESULT |
-| cmnd/school/br | tt.set_duration(5) | sets the duration | stat/school/RESULT |
-| cmnd/school/br | tt.active_days | shows the active days | stat/school/RESULT |
-| cmnd/school/br | tt.set_active_days("1-5") | set the active days | stat/school/RESULT |
+| cmnd/school/br | tt1.bell_on() | rings the bell | stat/school/RESULT |
+| cmnd/school/br | tt1.timetable | shows the timetable | stat/school/RESULT |
+| cmnd/school/br | tt1.set_timetable("1000 1045")| sets the timetable | stat/school/RESULT |
+| cmnd/school/br | tt1.duration | shows the duration | stat/school/RESULT |
+| cmnd/school/br | tt1.set_duration(5) | sets the duration | stat/school/RESULT |
+| cmnd/school/br | tt1.active_days | shows the active days | stat/school/RESULT |
+| cmnd/school/br | tt1.set_active_days("1-5") | set the active days | stat/school/RESULT |
 
 There are a lot of mqtt GUI apps on mobile(and Web) allowing to automate theese commands with buttons if you need this, but I think is overkill, given how rarelly you need to change the settings.
 

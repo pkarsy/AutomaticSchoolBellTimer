@@ -137,7 +137,6 @@ Without leaving the Berry Console, write:
 
 ```berry
 load('timetable')
-global.start_timetable(1)
 ```
 
 You will see the timetable starting, using some defaults.

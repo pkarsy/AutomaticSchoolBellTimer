@@ -28,7 +28,7 @@ For the software installation/testing you can replace temprarilly the Relay with
 ### Step 2. Tasmota installation.
 This is a very short guide, for more info go to the Tasmota installation page.
 
-Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, there is no need to install anything in your computer apart from the browser. **You may need to press the boot button when plugging the ESP board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
+Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, there is no need to install anything on your computer apart from the browser. **You may need to press the boot button when plugging the ESP board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
 
 - Go to https://tasmota.github.io/install/ (Or simply search for ["tasmota intaller"](https://duckduckgo.com/?t=h_&q=tasmota+installer)). Tasmota(english) is the safest option.
 

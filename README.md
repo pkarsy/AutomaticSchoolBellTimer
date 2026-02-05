@@ -6,7 +6,7 @@ Notice: Some sections are not ready yet, for example some photos and some instru
 ![SchoolTimer](timer.png)
 
 ### WARNING
-**WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** Ask a licenced technician to do the mains connection.
+⚡🚨 **WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** ⚡🚨 Ask a licenced technician to do the mains connection.
 
 ### Characteristics
 - Very accurate, using NTP(Network Time Protocol). This also means that the time never needs to be set manually.

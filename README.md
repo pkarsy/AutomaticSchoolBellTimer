@@ -17,8 +17,8 @@ Notice: Some sections are not ready yet, for example some photos and some instru
 - Reliable hardware. It is expected to work for years and years to come. The minimal part count and the airtight enclosure is hepling on this.
 - Reliable software. Minimal dependencies on external services. It can tolerate power outages and MONTHS of WIFI anavailability before the time drift becomes noticeable. The CR2032 coin cell will probably work for 10 years and probably more (discharges only when not in mains power).
 - Very low cost (See the list with materials below)
-- With the **option** of MQTT, it can also be monitored and controlled outside of the local network. Even when enabled, there is still no dependency for MQTT for norman operation. This is important as we dont now if MQTT it is working or even the server exists years later (see the dedicated section).
-- (Rarelly needed) Ability to use more than 1 timetables even different bells. See the dedicated paragraph.
+- With the **option** of MQTT, it can also be monitored and controlled outside of the local network. Even when enabled, there is still no dependency for MQTT for the main operation. This is important as we dont now if MQTT it is working (or if the server exists) years later (see the dedicated section).
+- (Rarelly needed) Ability to use more than 1 timetables even different bells. See below.
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
@@ -157,7 +157,7 @@ Restart(MainMenu → Restart) the module and go with the browser to the same IP 
 
 ### Step 6. Collecting the rest of the hardware.
 PHOTO-TODO
-- A project enclosure, better to be air tight, to prevent moisture and dust. 
+- A project enclosure, better to be air tight, to protect from moisture and dust. 
 - A few jumper cables (2.54 spacing). Use only unused cables, you have been warned.
 - Alternativelly a Devkit screw terminal breakout and simple copper wires.
 - A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone.
@@ -198,9 +198,14 @@ Wait the module to reset and wait to see if connection works. You will see the n
 Unplug the cable from the laptop and use the USB charger. Connect to the Timer using the tasmota web interface (IP or school.local) You can review the settings of the timer, as from now on is ready for work.
 
 ### Last Step. Document the recovery process
-Document to a paper and/or to an app, how to recover from a missing/changed Access Point.
+Document to a paper and/or to an app, how to recover from a missing/changed Access Point. Keep in a folder on your PC:
+A photo of the timer (ESP32x and cabling)
+The pins configuration (as simple text)
+The wifi configuration (ssid, password, maybe IP if it is static)
 
-Congratulations !
+
+### Congratulations !
+
 
 **############## Optional topics, some of them may be of interest to you. ##############**
 

@@ -166,7 +166,7 @@ PHOTO-TODO
 - Dual tape, hot glue, or anything you prefer to fix things inside the box.
 
 ### Step 7. Assembling the circuit NEED WORK TODO
-For the usb cable you will neet to open a hole like this and then use some Hot glue/Epoxy putty to fix the cable inside the hole.
+For the usb cable you will neet to open a hole like this and then use some Hot glue/Epoxy to fix the cable inside the hole.
 TODO photo
 Check the assembled box
 Connect the USB cable with the PC and check the functionality of the module. If you have not set the taimetable parameters yet, probably this is a good time to do so.
@@ -275,8 +275,8 @@ Probably not. If it is working, don't fix it. The same applies for the berry scr
 ### Why not using the buildin tasmota timers
 They are not very convenient for this specific application. Also there are cases ( schools with day+afternoon timetable) where the available timers are not enough. The "timetable.be" script offers an unlimited number of timers and a relatively easy to use web interface.
 
-### 5Ghz wifi. Currrently not working
-At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time. When the Tasmota system supports 5GHz, for example ESP32-C6, I guess it will be relatively easy to use the new chip.
+### 5Ghz wifi. Not working but not a big deal.
+At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time, just be sure to enable it.
 
 ### Why Tasmota and not an embeded programming language (Arduino, micropython circuitpyton, lua, ESP-IDF, toit) ?
 Tasmota acts as an operating system and solves for us some very important aspects of the project:
@@ -296,35 +296,40 @@ Tasmota acts as an operating system and solves for us some very important aspect
 This crusial operation is performed by the Tasmota system itself and not by the "timetable.be" script.
 It is using the ubiquous and ultra reliable NTP protocol. The default servers just work, so no need to configure anything.
 
-### Using other boards instead of DevKit
+### Notes on using various boards
+
+Older boards use micro-usb, but it is not very reliable. It is better to use a USB-C. The cable should be of good quality and be DATA(4pins) Most usb cables coming with various appliances are only charging cables, be careful
+
 The most important defference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
 
-- ESP32 boards(like DevKit) are prefered over ESP32-S2 or ESP32-C3. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use)
+- ESP32 boards(like DevKit) are OK. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use)
 
-- ESP32-C3. I have witnessed some instability whith C3(at 2025) : When the ESP32-C3 does not find an AccessPoint, frequently crashes. It recovers immediatelly but lets stay on the safe side. Some boards do not have Serial hardware creating headaches with installation and recovering.
+- ESP32-C3. It is also OK and the Wifi performance is the best. Some boards do not have Serial hardware but again the are very reliable. I have tested Luatos ESp32-C3 and WeAct ESP32-C3. They are both OK.
 
-- ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable.
+- ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable. I find the web interface very laggy and the USB frequnetly dissapear. If you have a board with dedicated sertial might be OK.
 
-- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): The battery charger must not be used, no 5V output for a relay. Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
+- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): The micro-usb is somewhat fragile. The battery charger must not be used, no 5V output for a relay. Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
 
-- Avoid tiny boards no matter how cute they are, almost always are missing crusial parts like Serial, GND etc.
+- Generally avoid tiny boards no matter how cute they are, almost always are missing crusial parts like Serial, GND etc. Some/all such tiny boards use Chip Antenna. Some sources claim it can be OK, but I disagree, the 2 chip antenna boards I have tested perform very poorly (2 meters range ! practically unusable). If you are insisiting on using chip antenna, first check the reviews for this specific board.
 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
+#### Relay types
+Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay using a MOV/TVS diode.
+
 ### Solid state Relays
-Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay using a TVS diode.
 
 - They work on specific conditions ususally only AC or only DC, and specific voltages. As we are probably talk about mains voltage, you will need a ~230V(or 110) AC relay.
 - They only need a GPIO pin and a GND for control (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
 - They usually have a very long life.
 - Triac based AC solid relays(most/all AC models ?) are very well suited for inductive loads (electromechanical bells).
-- They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other uses. Also check the manual if this tiny mA leak has some safety implications.
+- They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check the manual if this tiny mA leak has some safety implications.
 
 ### Electromechanical relays
 you have to use a [5V relay breakout board](https://duckduckgo.com/?q=5v+relay+breakout+single&t=h_&iar=images&iax=images&ia=images),
 
 - They needs a +5V a GPIO and a GND(not a GPIO)
-- They work for AC and DC and and A wide range of voltages.
+- They work for AC and DC and and a wide range of voltages.
 - Generally not well suited for inductive loads. (electromechanical bells) I imagine not all relays are the same, but this is a general rule.
 
 ### Problems with existing solutions/ reasons this project is created
@@ -336,10 +341,10 @@ Before creating this project I have tested a lot of timers. The limitations were
 - Not capable of switching to Daylight savings time. Even WIFI plugs have problems on this.
 - Computer based solutions suffer from complexity and unreliability. Operating system updates, broken harware, high electricity consumption, audio equipment maintainance, are some of the drawbacks.
 - Wall WIFI plugs like TUYA, sonoff etc have almost always the problem with limited number of timers. Every one needs a different mobile application, and they can ONLY be controlled by their modile app.
-- Especially WIFI plugs cannot be used as [dry(no voltage) contacts](https://en.wikipedia.org/wiki/Dry_contact) (See **electrical connection**).
-- Wifi based timers do not have internal battery backed RTC, and without network, will lose the time.
+- Especially WIFI plugs cannot be used as [dry(no voltage) contacts](https://en.wikipedia.org/wiki/Dry_contact) (See **electrical connection**). Most of the time this is a deal braker (see electrical connection).
+- Wifi based timers do not have internal battery backed RTC, and without network even temporarily, will lose the time.
 - Limited/No protection from moisture and dust.
 
 ### Another solution to protect the web page(additonally/instead of password).
-Use a wifi Access Point which is dedicated for the bell. This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/passord somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
+Use a wifi Access Point which is dedicated for the bell. This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/password somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
 

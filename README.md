@@ -51,8 +51,11 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 
 - Again in console (and dont forget the "backlog"), various important settings
   ```berry
-  
-  backlog SetOption0 0; hostname school; SetOption55 1; SetOption65 1
+  Backlog SetOption53 1; SetOption65 1; SetOption36 0 ;SetOption55 1; SetOption56 1; SetOption0 0; WifiConfig 5; PowerOnState 0;
+  ```
+  Replace  the "school" with the schools name, but use latin allphanumeric characters.
+  ```berry
+  backlog DeviceName school; FriendlyName school; Topic school ; Hostname school; mqttlog 2; mqttclient school-%06X;
   ```
   The module will restart automatically and on boot messages(web console), you will see something like
   
@@ -63,7 +66,7 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 ###  Step 3. Pin configuration
 WebBrowser → IP address (or school.local) → Configuration → Module
 
-For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D25 and D26 to power the DS3231(needs only about 4mA).
+For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D25 and D26 to power the DS3231(needs only about 4mA). Needless to say, you can use any other pins for this purpose, and certainly real VCC and GND
 ```
 #### For the DS3231 module #########
 GPIO 25 → OutputHi (acts as VCC)
@@ -73,7 +76,7 @@ GPIO 33 → I2C SDA (Be careful NOT SPI SDA)
 
 #### For the indicating LED (Optional) #####
 GPIO 13(D13) → LedLink_i
-# GND is next to D13
+# GND is next to D13 id we use DevKit
 ## Finally for the SSR/Relay controlling the LED
 GPIO 4 → Relay(1)
 ```

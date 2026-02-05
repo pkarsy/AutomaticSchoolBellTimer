@@ -302,13 +302,13 @@ Older boards use micro-usb, but it is not very reliable. It is better to use a U
 
 The most important defference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
 
-- ESP32 boards(like DevKit) are OK. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use)
+- ESP32 boards(like DevKit) are OK. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use). One problem is most of the boards on online stores still use micro-usb which is more fragile and error prone on the long run that USB-C. Check the board to have USB-C
 
-- ESP32-C3. It is also OK and the Wifi performance is the best. Some boards do not have Serial hardware but again the are very reliable. I have tested Luatos ESp32-C3 and WeAct ESP32-C3. They are both OK.
+- ESP32-C3. It is also OK and the Wifi performance is the best. Some boards do not have Serial hardware but again the are very reliable. I have tested Luatos ESp32-C3 and WeAct ESP32-C3. They are both OK. Almost all boards come with USB-C(this is good)
 
-- ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable. I find the web interface very laggy and the USB frequnetly dissapear. If you have a board with dedicated sertial might be OK.
+- ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable as S2 comes with very limited buildin RAM. I find the web interface very laggy, and the USB frequently dissapears. Also setting the board to programming mode can be difficult. If you have a board with dedicated serial chip, it might be OK, but I generally cannot see the point to use ESP32-S2 for this specific project.
 
-- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): The micro-usb is somewhat fragile. The battery charger must not be used, no 5V output for a relay. Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
+- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): The micro-usb is somewhat fragile. The battery charger must not be used, no 5V output for a relay(SSD works fine). Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
 
 - Generally avoid tiny boards no matter how cute they are, almost always are missing crusial parts like Serial, GND etc. Some/all such tiny boards use Chip Antenna. Some sources claim it can be OK, but I disagree, the 2 chip antenna boards I have tested perform very poorly (2 meters range ! practically unusable). If you are insisiting on using chip antenna, first check the reviews for this specific board.
 

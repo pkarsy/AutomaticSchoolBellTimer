@@ -315,7 +315,7 @@ The most important defference between boards is the ESP chip. We have 3 options 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
 #### Relay types
-Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. There is a dedicated paragraph on how to protect the SSR/Relay using a MOV/TVS diode.
+Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. You can protect the SSR/Relay using a MOV/TVS diode.
 
 ### Solid state Relays
 
@@ -339,9 +339,9 @@ Before creating this project I have tested a lot of timers. The limitations were
 - Hard to use, almost unusable hardware control panel.
 - Severe time drift. This basically means constant maintenance and/or that the bell never rings at the expected time. A few minutes/even seconds error does not seem to be a problem at first glance, but the real problem is the argument with the students that the time is passed that they are gonna loose the bus etc.
 - Not capable of switching to Daylight savings time. Even WIFI plugs have problems on this.
-- Computer based solutions suffer from complexity and unreliability. Operating system updates, broken harware, high electricity consumption, audio equipment maintainance, are some of the drawbacks.
+- Computer based solutions are overkill and suffer from complexity and unreliability. Operating system updates, broken hardware, high electricity consumption, audio equipment maintainance, are some of the drawbacks.
 - Wall WIFI plugs like TUYA, sonoff etc have almost always the problem with limited number of timers. Every one needs a different mobile application, and they can ONLY be controlled by their modile app.
-- Especially WIFI plugs cannot be used as [dry(no voltage) contacts](https://en.wikipedia.org/wiki/Dry_contact) (See **electrical connection**). Most of the time this is a deal braker (see electrical connection).
+- Especially WIFI plugs cannot be used as [dry(no voltage) contacts](https://en.wikipedia.org/wiki/Dry_contact) (See **electrical connection**). Usually this alone is a deal braker.
 - Wifi based timers do not have internal battery backed RTC, and without network even temporarily, will lose the time.
 - Limited/No protection from moisture and dust.
 

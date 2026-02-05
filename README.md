@@ -138,13 +138,13 @@ Without leaving the Berry Console, write:
 ```berry
 load('timetable')
 ```
-
 You will see the timetable starting, using some defaults.
 
-To be started on every boot, it needs to be in "autoexec.be"
+
+## step 6. Load the scripts automativally on boot
 
 tools → Manage filesystem 
-Edit "autoexec.be" **(the white icon with the pencil)** if the file exists, otherwise create it ypurself.
+Edit "autoexec.be" **(the white icon with the pencil)** if the file exists, otherwise create it yourself.
 
 Append the lines.
 ```berry

@@ -22,7 +22,7 @@ Notice: Some sections are not ready yet, for example some photos and some instru
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin/38 pin boards (ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the board, a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
+The instructions and the pinout are for the DEVkit-30pin/38 pin boards (ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the board (prefer USB-C. The older micro-usb is unreliable), a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
 For the software installation/testing you can replace temprarilly the Relay with a LED. Even if you go directly for the SSR **do not connect any mains load to it** Almost all have a led buildin so you can know when it is activated. See the section **Relays and SSR** for more info.
 
 ### Step 2. Tasmota installation.

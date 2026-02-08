@@ -107,7 +107,7 @@ Now you have the driver "ds3231.be" in the tasmota filesystem. Whithout leaving 
 ```berry
 load('ds3231')
 ```
-and hopefully you will see the driver finding the module.
+and hopefully you will see the driver finding the module. If the driver cannpot find the DS3231 chip, either the cabling is wrong, or the pins are not configured correctly in the tasmota configuration page.(See previous step)
 
 ### Step 5. Berry script installation ("timetable.be")
 This program is implementing the timer engine and the web configuration page.

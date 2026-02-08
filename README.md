@@ -265,7 +265,7 @@ Probably not. If it is working, don't fix it. The same applies for the berry scr
 They are not very convenient for this specific application. Also there are cases ( schools with day+afternoon timetable) where the available timers are not enough. The "timetable.be" script offers an unlimited number of timers and a relatively easy to use web interface.
 
 ### 5Ghz wifi. Not working but not a big deal.
-At the moment all  ESP chips only work with WIFI 2.4 GHz. This is OK, as most Access Points support 2.4 GHz and 5GHz at the same time, just be sure to enable it. When 5GHz chips will be available, It will be trivial to include them.
+At the moment all  ESP chips only work with WIFI 2.4 GHz. This is OK, as most Access Points support 2.4 GHz and 5GHz at the same time, just be sure to enable it. When 5GHz chips will be available, it will be trivial to include them.
 
 ### Why Tasmota and not an embeded programming language (Arduino, micropython circuitpyton, lua, ESP-IDF, toit) ?
 Tasmota acts as an operating system and solves for us some very important aspects of the project:

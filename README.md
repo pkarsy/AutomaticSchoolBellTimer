@@ -14,7 +14,7 @@
 - Reliable hardware. It is expected to work for years and years to come. The minimal part count and the airtight enclosure is hepling on this.
 - Reliable software. Minimal dependencies on external services. It can tolerate power outages and MONTHS of WIFI anavailability before the time drift becomes noticeable. The CR2032 coin cell will probably work for 10 years and probably more (discharges only when not in mains power).
 - Very few parts (see the schematic). Easy assembly and low cost.
-- With the **optional** MQTT, it can also be monitored and controlled outside of the local network. Even when enabled, there is still no dependency for MQTT if for some reason stops working.
+- With the **optional** MQTT, it can also be monitored and controlled outside of the local network.
 - (Rarelly needed) Ability to use more than 1 timetables even different bells. See below.
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 

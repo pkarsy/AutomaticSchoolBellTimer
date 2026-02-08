@@ -80,9 +80,9 @@ GPIO 4 → Relay(1)
 Save the settings and the module will reboot. If you have installed the LED you will see it blinking until the boot process is complete. When the module connects to the Wifi, the LED will stay active indicating everything is OK.
 
 ### Step 4. Loading the DS3231 real time clock driver.
-Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. The driver lives in this [githun page](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231)
+Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. The driver lives in this [github page](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231),
 
-For convenience I include the installation instructions here:
+for convenience however, I include the installation instructions here:
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 
@@ -103,8 +103,7 @@ do
 end
 ```
 
-Now you have the driver "ds3231.be" in the tasmota filesystem.
-whithout leaving the console
+Now you have the driver "ds3231.be" in the tasmota filesystem. Whithout leaving the console
 ```berry
 load('ds3231')
 ```

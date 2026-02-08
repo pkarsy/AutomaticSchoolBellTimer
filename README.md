@@ -1,8 +1,5 @@
 # Automatic School Bell Timer
 
-Notice: Some sections are not ready yet, for example some photos and some instructions for the hardware assembly, but generally the reader should be able to build the hardware. I will try to complete the page as soon as I can.
-
-
 ![SchoolTimer](timer.png)
 
 ### WARNING
@@ -16,8 +13,8 @@ Notice: Some sections are not ready yet, for example some photos and some instru
 - As few parts as possible, no PCB, and no soldering at all (if we choose an ESP32 board with presoldered headers).
 - Reliable hardware. It is expected to work for years and years to come. The minimal part count and the airtight enclosure is hepling on this.
 - Reliable software. Minimal dependencies on external services. It can tolerate power outages and MONTHS of WIFI anavailability before the time drift becomes noticeable. The CR2032 coin cell will probably work for 10 years and probably more (discharges only when not in mains power).
-- Very low cost (See the list with materials below)
-- With the **option** of MQTT, it can also be monitored and controlled outside of the local network. Even when enabled, there is still no dependency for MQTT for the main operation. This is important as we dont now if MQTT it is working (or if the server exists) years later (see the dedicated section).
+- Very few parts (see the schematic). Easy assembly and low cost.
+- With the **optional** MQTT, it can also be monitored and controlled outside of the local network. Even when enabled, there is still no dependency for MQTT if for some reason stops working.
 - (Rarelly needed) Ability to use more than 1 timetables even different bells. See below.
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
@@ -159,34 +156,25 @@ load('timetable') # for the timetable
 Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 or MON-FRI. Before going to the next step be sure the timer is working as expected.
 
 ### Step 6. Collecting the rest of the hardware.
-PHOTO-TODO
-- A project enclosure, better to be air tight, to protect from moisture and dust. 
+As you can see (schematic) you will need a few more things to complete the project.
 - A few jumper cables (2.54 spacing). Use only unused cables, you have been warned.
 - Alternativelly a Devkit screw terminal breakout and simple copper wires.
 - A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone.
-- A connector for the bell connection. PHOTO TODO
-- ON/OFF switch. The switch will be in series with the bell.
-- Dual tape, hot glue, or anything you prefer to fix things inside the box.
+- A connector for the bell connection.
+- ON/OFF switch. This enables/disables the timer.
+- A project enclosure, better to be air tight, to protect from moisture and dust. Do not try to use a very small box, better to have some room to put the parts well organized and with the SSR and AC cables in some distance. Be prepared to open some holes for the cables, LED, switch and some way(for example hot glue, epoxy, tape) to fix all. There are excellent online tutorials on how to do this.
 
-### Step 7. Assembling the circuit NEED WORK TODO
-For the usb cable you will neet to open a hole like this and then use some Hot glue/Epoxy to fix the cable inside the hole.
-TODO photo
-Check the assembled box
-Connect the USB cable with the PC and check the functionality of the module. If you have not set the taimetable parameters yet, probably this is a good time to do so.
-
-### Step 8. Protect the web interface from anauthorized access
+### Step 7. Protect the web interface from anauthorized access
 Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a safe place.
 
-### Step 9. Install the electrical connector (near the manual bell switch) NEED WORK TODO
+### Step 8. Install the electrical connector (near the manual bell switch)
+AGAIN BE CAREFUL, THIS IS ELECTRICAL WORK.
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
-
-PHOTO
-Most probably the school already has a circuit for the bell, and a wall button for manual ringing. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if exists), just disable it.
-Or if you are sure you can completely remove the old timer, use the 2 wires for our Relay.
-TODO
+Almost certainly the school already has a wall button for the bell. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if it exists), just disable it.
+Or if you are sure you can completely remove the old timer, use the 2 wires for our SSR/Relay.
 
 ### Step 10. Reconfigure WIFI to use the new AccessPoint.
-
+If you have configured the wifi before at home, you have to reconfigure it to use the new AccessPoint.
 **Plug the USB cable to your computer** (chromium based browser) and use the same tasmota installer.
 "Configure Wifi" does not always work.
 
@@ -194,7 +182,7 @@ The most reliable way is to use the "Logs & Console"
 ```sh
 backlog ssid1 MyNewAP; password1 MyNewPassword
 ```
-Alternatively you can use a serial terminal like gtketrm, however in this case, instead of ENTER you may need Ctrl-J
+For the tinkerers : Alternatively you can use a serial terminal like gtketrm, however in this case, instead of ENTER you may need Ctrl-J
 
 Wait the module to reset and wait to see if connection works. You will see the new IP(the school.local should also work)
 

@@ -29,7 +29,7 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 
 - Go to https://tasmota.github.io/install/ (Or simply search for ["tasmota intaller"](https://duckduckgo.com/?t=h_&q=tasmota+installer)). Tasmota(english) is the safest option.
 
-- Press the connect button → choose the serial port → check "Erase Device" → Next → Install (**a boot button press might needed**)
+- Press the connect button → choose the serial port → check "Erase Device" → Next → Install (**a ESP boot button press might needed**)
 - After the installation is complete press Next → Configure WIFI.
 
   Use the current WIFI, even if it is going to be different at the end. When we move to the final location we can change the Access Point.
@@ -37,7 +37,7 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 - When connected, click Visit Device.
   Write down the IP address.It is something like 192.168.1.xx for home routers. This is the web page of the tasmota system. It is accessible from the LAN.
   
-- **From now on we are working from the browser. We will use a serial connection, only when we want to change Wifi.**
+- **From now on we are working from the browser using the IP address. We will only need a serial connection(USB cable) again, when we want to change Wifi.**
 
 - Set the TimeZone/Dayligtht settings.
   Go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/). Copy the necessary line and execute it in Tools → Console. (NOT berry console).

@@ -107,7 +107,7 @@ Now you have the driver "ds3231.be" in the tasmota filesystem. Whithout leaving 
 ```berry
 load('ds3231')
 ```
-and hopefully you will see the driver finding the module. If the driver cannpot find the DS3231 chip, either the cabling is wrong, or the pins are not configured correctly in the tasmota configuration page.(See previous step)
+and hopefully you will see the driver finding the module. If the driver cannot find the DS3231 chip, either the cabling is incorrect, or the pins are not configured correctly in the tasmota configuration page.(See the previous step)
 
 ### Step 5. Berry script installation ("timetable.be")
 This program is implementing the timer engine and the web configuration page.
@@ -152,7 +152,7 @@ load('ds3231') # for the DS3231
 load('timetable') # for the timetable
 ```
 
-Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. When testing choose * (=ALL) for active days. For real usage, most probably the setting will be 1-5 or MON-FRI. Before going to the next step be sure the timer is working as expected.
+Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. For the active days the correct setting is almost certainly 1-5 or MON-FRI. For tests you can set it to * (means ALL days even weekend) but set it correctly before actual use. Before going to the next step be sure the timer is working as expected.
 
 ### Step 6. Collecting the rest of the hardware.
 As you can see (schematic) you will need a few more things to complete the project.
@@ -166,7 +166,7 @@ As you can see (schematic) you will need a few more things to complete the proje
 ### Step 7. Protect the web interface from anauthorized access
 Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Configuration → Other → Web Admin Password (Username is "admin"). The page is not encrypted, so not very secure, but it is on LAN only, so I guess is OK. be sure to keep the password written in a safe place.
 
-### Step 8. Install the electrical connector (near the manual bell switch)
+### Step 8. Install the electrical connector
 AGAIN BE CAREFUL, THIS IS ELECTRICAL WORK.
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
 Almost certainly the school already has a wall button for the bell. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if it exists), just disable it.

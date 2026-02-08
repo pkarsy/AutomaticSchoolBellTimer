@@ -170,9 +170,8 @@ Set a Tasmota Web Admin Password to access the page. school.local(or IP) → Con
 AGAIN BE CAREFUL, THIS IS ELECTRICAL WORK.
 SWITCH OFF THE POWER OF THE electrical bells. Usually there is a dedicated switch in the electrical table.
 Almost certainly the school already has a wall button for the bell. In that case the most straitforward way is to install the connector 2 cables at the 2 poles of the switch. With this configuration the Bell rings whenever the SSR/Relay is activated. There is no need to uninstall the old timer (if it exists), just disable it.
-Or if you are sure you can completely remove the old timer, use the 2 wires for our SSR/Relay.
 
-### Step 10. Reconfigure WIFI to use the new AccessPoint.
+### Step 9. Reconfigure WIFI to use the new AccessPoint.
 If you have configured the wifi before at home, you have to reconfigure it to use the new AccessPoint.
 **Plug the USB cable to your computer** (chromium based browser) and use the same tasmota installer.
 "Configure Wifi" does not always work.
@@ -197,23 +196,23 @@ The wifi configuration (ssid, password, maybe IP if it is static)
 ### Congratulations !
 
 
-**############## Optional topics, some of them may be of interest to you. ##############**
+## Optional topics, some of them may be of interest to you.
 
 ### How to power OFF the ESP32
 Unplug the USB charger. The ON/OFF button as we have seen, only diconnects the Relay output.
 
 ### More than 1 timetable/bells
-TODO NOT READY YET
+Generally Works, It will documented when it is ready.
 ```
 global.start_timetable(2)
 ```
 The second timetable can be (for example) an additional class on Friday afternoon.
 
 ### No Manual "RING" button ?
-This is the job of a wall button, indepedent of our timer.
+This is the job of a wall button, independent of our timer. All schools I know have one.
 
 ### MQTT server, optional but useful for debugging and remote control
-There are a lot of online MQTT servers free and paid and you may prefer them instead of hosting your own. Examples are (there are more):
+There are a lot of online MQTT servers free and paid and you may prefer them instead of hosting your own. Examples are (free, and there are more):
 - hivemqtt.com
 - flespi.com
 
@@ -236,7 +235,7 @@ after restart paste the following commands, modified of course for your MQTT ser
 backlog topic school; setoption132 1; SetOption103 1; MqttHost mqtt.hostname.io; MqttPort 8883 ; MqttUser myusername ; MqttPassword mypassword;
 ```
 
-The module will again restart and this time you should see the module connecting and sending status messages to the server.
+The module will again restart and this time you should see the module connecting and sending status messages to the MQTT server.
 
 | publish topic | payload       | action | response topic |
 | ------------- | ------------- | ----- | ------- |
@@ -253,10 +252,10 @@ There are a lot of mqtt GUI apps on mobile(and Web) allowing to automate theese 
 ### Control the timer with console comands.
 You can control the timetable with console(serial console or web console) commands.
 ```sh
-br tt.bell_on()
-br tt.set_timetable("1000 1045")
-br tt.set_duration(5)
-br tt.set_active_days("1-5")
+br tt1.bell_on()
+br tt1.set_timetable("1000 1045")
+br tt1.set_duration(5)
+br tt1.set_active_days("1-5")
 ```
 
 ### Do I need to update the tasmota system ?
@@ -266,7 +265,7 @@ Probably not. If it is working, don't fix it. The same applies for the berry scr
 They are not very convenient for this specific application. Also there are cases ( schools with day+afternoon timetable) where the available timers are not enough. The "timetable.be" script offers an unlimited number of timers and a relatively easy to use web interface.
 
 ### 5Ghz wifi. Not working but not a big deal.
-At the moment all Tasmota supported ESP chips only work with WIFI 2.4 GHz. This is acceptable, as most Access Points support 2.4 GHz and 5GHz at the same time, just be sure to enable it.
+At the moment all  ESP chips only work with WIFI 2.4 GHz. This is OK, as most Access Points support 2.4 GHz and 5GHz at the same time, just be sure to enable it. When 5GHz chips will be available, I will be trivial to include them.
 
 ### Why Tasmota and not an embeded programming language (Arduino, micropython circuitpyton, lua, ESP-IDF, toit) ?
 Tasmota acts as an operating system and solves for us some very important aspects of the project:
@@ -288,30 +287,30 @@ It is using the ubiquous and ultra reliable NTP protocol. The default servers ju
 
 ### Notes on using various boards
 
-Older boards use micro-usb, but it is not very reliable. It is better to use a USB-C. The cable should be of good quality and be DATA(4pins) Most usb cables coming with various appliances are only charging cables, be careful
+Older boards use micro-usb, but it is not very reliable. Invest in a USB-C board. The cable should be of good quality and be DATA(4pins) Most usb cables coming with various appliances are only charging cables, be careful
 
-The most important defference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
+The most important difference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
 
-- ESP32 boards(like DevKit) are OK. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use). One problem is most of the boards on online stores still use micro-usb which is more fragile and error prone on the long run that USB-C. Check the board to have USB-C
+- ESP32 boards(like DevKit) are OK. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use). One problem is most of the boards on online stores still use micro-usb. Ensure the board to have USB-C
 
 - ESP32-C3. It is also OK and the Wifi performance is the best. Some boards do not have Serial hardware but again the are very reliable. I have tested Luatos ESp32-C3 and WeAct ESP32-C3. They are both OK. Almost all boards come with USB-C(this is good)
 
 - ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable as S2 comes with very limited buildin RAM. I find the web interface very laggy, and the USB frequently dissapears. Also setting the board to programming mode can be difficult. If you have a board with dedicated serial chip, it might be OK, but I generally cannot see the point to use ESP32-S2 for this specific project.
 
-- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): The micro-usb is somewhat fragile. The battery charger must not be used, no 5V output for a relay(SSD works fine). Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
+- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): Is micro-usb. The battery charger must not be used, no 5V pin for a relay(SSD works fine). Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
 
-- Generally avoid tiny boards no matter how cute they are, almost always are missing crusial parts like Serial, GND etc. Some/all such tiny boards use Chip Antenna. Some sources claim it can be OK, but I disagree, the 2 chip antenna boards I have tested perform very poorly (2 meters range ! practically unusable). If you are insisiting on using chip antenna, first check the reviews for this specific board.
+- Generally avoid tiny boards no matter how cute they are, almost always are missing crusial parts like GND. But most importantly some/all use Chip Antennas. Some sources claim it can be OK, but I disagree, the 2 different chip antenna boards I have tested, perform very poorly (2 meters range, unusable for the bell timer). If you are insisiting on using chip antenna, first check the reviews for this specific board. On the contrary PCB antenna boards are usually fine.
 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
-#### Relay types
-Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. You can protect the SSR/Relay using a MOV/TVS diode.
+### Relay types
+Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). and GEYES. It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. You can protect the SSR/Relay using a MOV/TVS diode. TODO
 
 ### Solid state Relays
 
-- They work on specific conditions ususally only AC or only DC, and specific voltages. As we are probably talk about mains voltage, you will need a ~230V(or 110) AC relay.
+- They work on specific conditions ususally only AC or only DC, and specific voltages. As we are probably talk about mains voltage, you will need a ~230V(or 110) AC SSR.
 - They only need a GPIO pin and a GND for control (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
-- They usually have a very long life.
+- They usually have a very long life. If we protect the output pins with a MOV/TVS diode, the life expectancy is even higher.
 - Triac based AC solid relays(most/all AC models ?) are very well suited for inductive loads (electromechanical bells).
 - They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check the manual if this tiny mA leak has some safety implications.
 

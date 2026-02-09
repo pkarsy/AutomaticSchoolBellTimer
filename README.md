@@ -324,7 +324,7 @@ The most important difference between boards is the ESP chip. We have 3 options 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
 ### Relay types
-Note that I only have tested the project with a [FOTEK Solid state relay](https://duckduckgo.com/?q=fotek+ssr&t=h_&iar=images&iax=images&ia=images). and GEYES. It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. You can protect the SSR/Relay using a MOV/TVS diode. TODO
+I have tested the project with a FOTEK Solid state relay and GEYA VSR8. It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. You can protect the SSR/Relay using a MOV/TVS diode. TODO
 
 ### Solid state Relays
 

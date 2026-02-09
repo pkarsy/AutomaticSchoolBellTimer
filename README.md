@@ -355,5 +355,5 @@ Before creating this project I have tested a lot of timers. The limitations were
 - Limited/No protection from moisture and dust.
 
 ### Another solution to protect the web page(additonally/instead of password).
-Use a wifi Access Point which is dedicated for the bell. This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/password somewere. Or it can be a second("Guest") access point available via the configuration page of many commercial Access Points.
+Use a wifi Access Point which is dedicated for the bell. This can be an old unused acces point. This way any changes to the primary network do not disturb the bell. To be able to access the Tasmota Web Page you have to connect to the same AP, so you have to keep the AP/password somewere. Or it can be a second("IOT") access point available via the configuration of many commercial Access Points.
 

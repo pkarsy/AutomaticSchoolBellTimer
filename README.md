@@ -3,46 +3,56 @@
 ![SchoolTimer](timer.png)
 
 ### WARNING
-⚡🚨 **WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** 🚨⚡ Ask a licenced technician to do the mains connection. The AC connector (schematic) should be connected ONLY after assembling fully the parts and the project BOX is closed.
+⚡🚨 **WORKING WITH MAINS VOLTAGE IS VERY DANGEROUS. KEEP ALL PRECAUTIONS AND DO IT AT YOUR OWN RISK.** Ask a licenced technician to do the mains connection. The AC connector (schematic) should be connected ONLY after assembling fully the parts and the project BOX is closed.🚨⚡
 
 ### Characteristics
-- Very accurate, using NTP(Network Time Protocol). This also means that the time never needs to be set manually.
+
+- Very accurate, using NTP(Network Time Protocol). The time never needs to be set manually.
+
 - Time Zone and Automatic Daylight Savings Time.
-- Resistant to Network disconnections and power outages. The module keeps accurate time on such occasions, and only needs to connect the Internet to fix the time drift (less than 1 sec per week without Internet). We use a dedicated DS3231 module(backed by a lithium coin cell) for this.
+
+- Resistant to Network failures and power outages. The module keeps accurate time, and only needs the Internet to fix the time drift (less than 1 sec per week). We use a dedicated DS3231 module(backed by a lithium coin cell) for this.
+
 - Easy configuration via PC or mobile.
-- As few parts as possible, no PCB, and no soldering at all (if we choose an ESP32 board with presoldered headers).
-- Reliable hardware. It is expected to work for years and years to come. The minimal part count and the airtight enclosure is hepling on this.
-- Reliable software. Minimal dependencies on external services. It can tolerate power outages and MONTHS of WIFI anavailability before the time drift becomes noticeable. The CR2032 coin cell will probably work for 10 years and probably more (discharges only when not in mains power).
+
 - Very few parts (see the schematic). Easy assembly and low cost.
-- With the **optional** MQTT, it can also be monitored and controlled outside of the local network.
-- (Rarelly needed) Ability to use more than 1 timetables even different bells. See below.
+
+- No PCB, and no soldering at all (if we bye a ESP32x board with presoldered headers).
+
+- Reliable hardware. It is expected to work for many years. The minimal part count and the airtight enclosure is hepling on this.
+
+- With  (optional) MQTT, it can also be monitored and controlled outside of the local network.
+
+- (Rarelly needed) Ability to use more than 1 timetables even different bells.
+
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Step 1. Connect the electronic parts just like the above schematic.
 The instructions and the pinout are for the DEVkit-30pin/38 pin boards (ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the board (prefer USB-C. The older micro-usb is unreliable), a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
-For the software installation/testing you can replace temprarilly the Relay with a LED. Even if you go directly for the SSR **do not connect any mains load to it** Almost all have a led buildin so you can know when it is activated. See the section **Relays and SSR** for more info.
+For the software installation/testing you can replace temporarilly the Relay with a LED. If you connect directly the SSR, **make sure do not connect any mains load to it.** Almost all have a LED buildin so you can know when it is activated.
 
 ### Step 2. Tasmota installation.
-This is a very short guide, for more info go to the Tasmota installation page.
+This is a short guide, for more info go to the Tasmota installation page.
 
-Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, there is no need to install anything on your computer apart from the browser. **You may need to press the boot button when plugging the ESP board to the computer.** Linux users may get serial permission error, you have to add yourself to the "dialout" group.
+Connect the ESP board with the USB cable to your computer. Tasmota supports a very convenient web based installer, there is no need to install anything on your computer. Linux users may get serial permission error, you have to add yourself to the "dialout" group.
 
 - Go to https://tasmota.github.io/install/ (Or simply search for ["tasmota intaller"](https://duckduckgo.com/?t=h_&q=tasmota+installer)). Tasmota(english) is the safest option.
 
 - Press the connect button → choose the serial port → check "Erase Device" → Next → Install (**a ESP boot button press might needed**)
-- After the installation is complete press Next → Configure WIFI.
 
-  Use the current WIFI, even if it is going to be different at the end. When we move to the final location we can change the Access Point.
+- After the installation is complete press Next → Configure WIFI. If you cannot communicate with the board, reset and reconnect. For other configuration methods see the Tasmota installation page.
+
+-  Use the current Access Point, even if it is going to be different at the end. When we move to the final location we can change the Access Point.
 
 - When connected, click Visit Device.
   Write down the IP address.It is something like 192.168.1.xx for home routers. This is the web page of the tasmota system. It is accessible from the LAN.
   
-- **From now on we are working from the browser using the IP address. We will only need a serial connection(USB cable) again, when we want to change Wifi.**
+- **From now on we are working from the browser using the IP address. We will need a serial connection (USB cable) again, if we want to change Wifi.**
 
 - Set the TimeZone/Dayligtht settings.
-  Go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/). Copy the necessary line and execute it in Tools → Console. (NOT berry console).
+  Go to [Tasmota Timezone Table](https://tasmota.github.io/docs/Timezone-Table/). Copy the necessary line and paste + execute it in Tools → Console. (NOT berry console).
 
-  execute the "time" command
+  execute the console "time" command.
  
   You will see the time changing to your local time.
 
@@ -50,7 +60,7 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
   ```berry
   Backlog SetOption53 1; SetOption65 1; SetOption36 0 ;SetOption55 1; SetOption56 1; SetOption0 0; WifiConfig 5; PowerOnState 0;
   ```
-  Replace  the "school" with the schools name, but use latin allphanumeric characters.
+  Replace  the "school" with the schools name, but only use latin allphanumeric characters.
   ```berry
   backlog DeviceName school; FriendlyName school; Topic school ; Hostname school; mqttlog 2; mqttclient school-%06X;
   ```
@@ -63,26 +73,35 @@ Connect the ESP board with the USB cable to your computer. Tasmota supports a ve
 ###  Step 3. Pin configuration
 WebBrowser → IP address (or school.local) → Configuration → Module
 
-For boards other than DevKit of course you need to adapt the pin configurtion. As you can see we have used D25 and D26 to power the DS3231(needs only about 4mA). Needless to say, you can use any other pins for this purpose, and certainly real VCC and GND
+Adjust the pin configurtion for your ESP board. As you can see we have used D25 and D26 to power the DS3231(needs only about 4mA). This allows easy cabling. Use real VCC and GND if you prefer.
+
+**DevKit (schematic)**
 ```
-#### For the DS3231 module #########
+#### DS3231 module
 GPIO 25 → OutputHi (acts as VCC)
 GPIO 26 → OutputLow (acts as GND)
 GPIO 32 → I2C SCL
 GPIO 33 → I2C SDA (Be careful NOT SPI SDA)
 
-#### For the indicating LED (Optional) #####
+#### Indicating LED (Optional)
 GPIO 13(D13) → LedLink_i
 # GND is next to D13 id we use DevKit
-## Finally for the SSR/Relay controlling the LED
+## SSR/Relay
 GPIO 4 → Relay(1)
 ```
+
+**alternative build with Luatos ESP32-C3 board (schematic)**
+```
+GPIO 4 → I2C SCL
+GPIO 5 → I2C SDA (Be careful NOT SPI SDA)
+GPIO 9 → LedLink_i
+GPIO 2 → Relay(1)
+```
+
 Save the settings and the module will reboot. If you have installed the LED you will see it blinking until the boot process is complete. When the module connects to the Wifi, the LED will stay active indicating everything is OK.
 
 ### Step 4. Loading the DS3231 real time clock driver.
-Without this it is easy for the module to lose the time, on power outages and/or unstable Wifi. The driver lives in this [github page](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231),
-
-for convenience however, I include the installation instructions here:
+The driver lives in this [github page](https://github.com/pkarsy/TasmotaBerryTime/tree/main/ds3231), for convenience however, I include the installation instructions here:
 
 WebBrowser → IP address (or school.local) → tools → Berry scripting console
 
@@ -107,10 +126,10 @@ Now you have the driver "ds3231.be" in the tasmota filesystem. Whithout leaving 
 ```berry
 load('ds3231')
 ```
-and hopefully you will see the driver finding the module. If the driver cannot find the DS3231 chip, either the cabling is incorrect, or the pins are not configured correctly in the tasmota configuration page.(See the previous step)
+and hopefully you will see the driver finding the module. If the driver cannot find the DS3231 chip, either the cabling is incorrect, or the pins are not configured correctly in the tasmota configuration page.(See the previous step). **No need to set the DS3231 time, the driver will do it for you.**
 
 ### Step 5. Berry script installation ("timetable.be")
-This program is implementing the timer engine and the web configuration page.
+This script is implementing the timer engine and the web configuration page.
 
 Again in Berry console paste and execute the following code:
 
@@ -151,11 +170,12 @@ load('ds3231') # for the DS3231
 
 load('timetable') # for the timetable
 ```
+And save.
 
-Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. This is the configuration page of the School Timer. For the active days the correct setting is almost certainly 1-5 or MON-FRI. For tests you can set it to * (means ALL days even weekend) but set it correctly before actual use. Before going to the next step be sure the timer is working as expected.
+Restart(MainMenu → Restart) the module and go with the browser to the same IP address(or school.local) as previously. You will see a "School Timer" button on top. **This is the configuration page of the School Timer.** For the active days the correct setting is almost certainly 1-5 or MON-FRI. For tests you can set it to * (means ALL days even weekend) but set it correctly before actual use. Set an alarm for the next minutes and check that it is working.
 
 ### Step 6. Collecting the rest of the hardware.
-As you can see (schematic) you will need a few more things to complete the project.
+As you can see (schematic) you will need a few more parts to complete the project.
 - A few jumper cables (2.54 spacing). Use only unused cables, you have been warned.
 - Alternativelly a Devkit screw terminal breakout and simple copper wires.
 - A usb charger. No need to be powerful, but it helps to be of good quality, for example from an old phone.

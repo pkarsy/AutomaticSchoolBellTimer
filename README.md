@@ -27,9 +27,21 @@
 
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
-### Step 1. Connect the electronic parts just like the above schematic.
-The instructions and the pinout are for the DEVkit-30pin/38 pin boards (ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the board (prefer USB-C. The older micro-usb is unreliable), a DS3231 module a Solid state relay, 1 optional LED (can be bought ready precabled with the resistor) and a quality USB **DATA** cable.
-For the software installation/testing you can replace temporarilly the Relay with a LED. If you connect directly the SSR, **make sure do not connect any mains load to it.** Almost all have a LED buildin so you can know when it is activated.
+### Tips (Important, do not skip this)
+- Prefer to buy some parts and wait a few days, than using old/broken/unsuitable parts you happen to already own. This project is about reliability.
+Read the README before hunting parts in online stores.
+- If you are going to solder the headers yourself, only solder the pins that you need. This will make the assembly easier and less error prone.
+- Instead of soldering headers, you can also solder screw 2.54mm terminals. The assembly is easier, and the terminals are more reliable. For stranded cables use crimbs.
+- Avoid Micro-USB boards. They are very unreliable in the long run(SMD, easily crack, unexpectedly and with minor mechanical stress.). The micro-usb cable gradually disapears, and is probable you will not find one in usable condition, if you need a replacement.
+- The LEDs with cable and resistor , even with the Dupont connectors can be found on online stores.
+- Boards with chip antennas (my obseravation) seem to have very bad Wifi signal. PCB antennas are better.
+- Some USB-C cables are charge only, so you cannot communicate with the board. Make sure you use a data cable, especially at the final installation.
+- A paper with recovery instructions password, pinout etc. folded and inside the timer box, will save your day a few years later.
+
+
+### Step 1. Connect the electronic parts just like the above schematic (without the box).
+The instructions and the pinout are for the DEVkit-30pin/38 pin boards (ESP32 based). For other boards see the dedicated section below, especialy what Pins you can use. A [terminal adapter](https://duckduckgo.com/?q=esp32+screw+terminal+adapter&t=lm&iar=images&iax=images&ia=images) can make the assembly even easier. We need the board, a DS3231 module a Solid state relay, 1 optional LED and a quality USB **DATA** cable.
+For the software installation/testing you can replace temporarilly the Relay with a LED. If you connect directly the SSR, **do not connect any mains load to it.** The buildin LED shows when it is activated.
 
 ### Step 2. Tasmota installation.
 This is a short guide, for more info go to the Tasmota installation page.

@@ -319,41 +319,29 @@ It is using the ubiquous and ultra reliable NTP protocol. The default servers ju
 
 ### Notes on using various boards
 
-Older boards use micro-usb, but it is not very reliable. Invest in a USB-C board. The cable should be of good quality and be DATA(4pins) Most usb cables coming with various appliances are only charging cables, be careful
+- ESP32 boards(like DevKit) are OK. Be careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use). One problem is most of the boards on online stores still use micro-usb. Ensure the board to have USB-C.
 
-The most important difference between boards is the ESP chip. We have 3 options here: ESP32 ESP32-S2 ESP32-C3
+- ESP32-C3. It is also OK and the Wifi performance is the best. Some boards do not have Serial hardware but again the are very reliable. I have tested Luatos ESp32-C3 and WeAct ESP32-C3. They are both OK.
 
-- ESP32 boards(like DevKit) are OK. They always come with a dedicated USB-serial chip (CP2102, CH9102, CH340) and this characteristic allows easy programming and recovering. Ber careful with [the pins you can use.](https://duckduckgo.com/?q=esp32+what+pins+to+use). One problem is most of the boards on online stores still use micro-usb. Ensure the board to have USB-C
+- ESP32-S2. Some boards come without PSRAM and are practically unusable as S2 comes with very limited buildin RAM. I find the web interface very laggy, and the USB frequently dissapears. Also setting the board to programming mode can be difficult. I generally cannot see the point to use ESP32-S2 for this specific project.
 
-- ESP32-C3. It is also OK and the Wifi performance is the best. Some boards do not have Serial hardware but again the are very reliable. I have tested Luatos ESp32-C3 and WeAct ESP32-C3. They are both OK. Almost all boards come with USB-C(this is good)
+There are many board specific limitations:
 
-- ESP32-S2. No Hardware Serial. Some boards come without PSRAM and are practically unusable as S2 comes with very limited buildin RAM. I find the web interface very laggy, and the USB frequently dissapears. Also setting the board to programming mode can be difficult. If you have a board with dedicated serial chip, it might be OK, but I generally cannot see the point to use ESP32-S2 for this specific project.
+- No 5V pin, so you cannot use a 5V electomechanical relay. Solid state relays(SSD) work fine.
 
-- There are many board specific limitations. For example for [ESP32 LOLIN32 Lite](https://duckduckgo.com/?q=ESP32+LOLIN32+Lite&iax=images&ia=images): Is micro-usb. The battery charger must not be used, no 5V pin for a relay(SSD works fine). Only 1 GND pin (we can simulate VCC and GND with GPIO pins)
+- Limited GND pins, but as we said you can simulate VCC and GND with GPIO pins.
 
-- Generally avoid tiny boards no matter how cute they are, almost always are missing crusial parts like GND. But most importantly some/all use Chip Antennas. Some sources claim it can be OK, but I disagree, the 2 different chip antenna boards I have tested, perform very poorly (2 meters range, unusable for the bell timer). If you are insisiting on using chip antenna, first check the reviews for this specific board. On the contrary PCB antenna boards are usually fine.
+- Some boards have only one micro-usb version. Avoid it.
+
+- Generally avoid tiny boards, almost always are missing something useful. But most importantly some/all use Chip Antennas. Some sources claim it can be OK, but I disagree, the 2 different chip antenna boards I have tested, perform very poorly (2 meters range, unusable for the bell timer). If you are insisiting on using chip antenna, first check the reviews for this specific board. On the contrary PCB antenna boards are usually fine.
 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
 ### Relay types
-I have tested the project with a FOTEK Solid state relay and GEYA VSR8. It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both can have failures, so it is not a bad idea to have a spear SSR/relay. There are discussions on internet, that say that a solid state relay rated with more current can withstand more abuse from the electromechanical bells. You can protect the SSR/Relay using a MOV/TVS diode. TODO
+I have tested the project with a "GEYA VSR8" and also with "FOTEK" Solid State Relay(AC Mains type). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both Mechanical Relays and SSR can have failures, it seems the SSR (zero crossing type) are more suitable for Elctromechanical Bells. A MOV and or a TVS diode (parallel with the SSR) can absorb a lot of overvolages due to transients. Be very careful with the SSR or Relay, it must mach the Voltage and the Bell type.
 
-### Solid state Relays
 
-- They work on specific conditions ususally only AC or only DC, and specific voltages. As we are probably talk about mains voltage, you will need a ~230V(or 110) AC SSR.
-- They only need a GPIO pin and a GND for control (Even this can be simulated by a GPIO, so you can choose the most convenient PINs)
-- They usually have a very long life. If we protect the output pins with a MOV/TVS diode, the life expectancy is even higher.
-- Triac based AC solid relays(most/all AC models ?) are very well suited for inductive loads (electromechanical bells).
-- They cannot completly cut the power, allowing some mA to leak. For electromechanical bells this is OK, but I dont know about other types. Also check the manual if this tiny mA leak has some safety implications.
-
-### Electromechanical relays
-you have to use a [5V relay breakout board](https://duckduckgo.com/?q=5v+relay+breakout+single&t=h_&iar=images&iax=images&ia=images),
-
-- They needs a +5V a GPIO and a GND(not a GPIO)
-- They work for AC and DC and and a wide range of voltages.
-- Generally not well suited for inductive loads. (electromechanical bells) I imagine not all relays are the same, but this is a general rule.
-
-### Problems with existing solutions/ reasons this project is created
+### Why this project is created
 Before creating this project I have tested a lot of timers. The limitations were very severe, and I document them here without particular order.
 
 - Very limited number of timers, usually smaller than the 14-20 a school needs.

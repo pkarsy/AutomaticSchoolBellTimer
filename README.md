@@ -338,18 +338,18 @@ There are many board specific limitations:
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
 ### Relay types
-I have tested the project with a "GEYA VSR8" and also with "FOTEK" Solid State Relay(AC Mains type). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both Mechanical Relays and SSR can have failures, it seems the SSR (zero crossing type) are more suitable for Elctromechanical Bells. A MOV and or a TVS diode (parallel with the SSR) can absorb a lot of overvolages due to transients. Be very careful with the SSR or Relay, it must mach the Voltage and the Bell type.
+I have tested the project with a "GEYA VSR8" and also with "FOTEK" Solid State Relay(AC Mains type). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both Mechanical Relays and SSR can have failures, it seems the SSR (zero crossing type) are more suitable for Elctromechanical Bells. A MOV and or a TVS diode (parallel with the SSR) can absorb a lot of overvoltages due to transients. Be very careful with the SSR or Relay, it must mach the Voltage and the Bell type.
 
 
 ### Why this project is created
-Before creating this project I have tested a lot of timers. The limitations were very severe, and I document them here without particular order.
+I have tested a lot of timer solutions in the past. The limitations were severe, and I document them here without some particular order.
 
 - Very limited number of timers, usually smaller than the 14-20 a school needs.
-- Hard to use, almost unusable hardware control panel.
-- Severe time drift. This basically means constant maintenance and/or that the bell never rings at the expected time. A few minutes/even seconds error does not seem to be a problem at first glance, but the real problem is the argument with the students that the time is passed that they are gonna loose the bus etc.
+- Hard to use, almost unusable hardware control panel. Each one has a different interface.
+- Severe time drift. This means constant maintenance and/or that the bell never rings at the expected time. A few minutes/even seconds error does not seem to be a problem at first glance, but the real problem is the argument with the students that the time is passed, that they are gonna loose the bus etc.
 - Not capable of switching to Daylight savings time. Even WIFI plugs have problems on this.
 - Computer based solutions are overkill and suffer from complexity and unreliability. Operating system updates, broken hardware, high electricity consumption, audio equipment maintainance, are some of the drawbacks.
-- Wall WIFI plugs like TUYA, sonoff etc have almost always the problem with limited number of timers. Every one needs a different mobile application, and they can ONLY be controlled by their modile app.
+- Wall WIFI plugs like TUYA, sonoff etc have almost always the problem with limited number of timers. Every one needs a different mobile application, and they can ONLY be controlled by their respective modile app.
 - Especially WIFI plugs cannot be used as [dry(no voltage) contacts](https://en.wikipedia.org/wiki/Dry_contact) (See **electrical connection**). Usually this alone is a deal braker.
 - Wifi based timers do not have internal battery backed RTC, and without network even temporarily, will lose the time.
 - Limited/No protection from moisture and dust.

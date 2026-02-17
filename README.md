@@ -309,14 +309,23 @@ At the moment all  ESP chips only work with WIFI 2.4 GHz. This is OK, as most Ac
 Tasmota acts as an operating system and solves for us some very important aspects of the project:
 
 - Network connectivity (this includes WIFI, TLS , optional MQTT client, and of course credentials storage).
+
 - Keeping the system time accurate, using the NTP protocol.
+
 - A customizable web server, which allows us to create easily a configuration page.
+
 - Time Zone and Daylight Time.
+
 - Easy control of peripherals.
+
 - filesystem and settings storage.
+
 - a scripting language, the excellent Berry Language.
+
 - Easy device connection (DS3231 specifically).
+
 - An excellent web based installer. No software/programming environment is needed for installation (only a browser) and it is working the same on all operating systems.
+
 - Easy recovery using the same tasmota web installer (or any serial terminal if you prefer).
 
 ### How Tasmota is getting the time from the Internet.

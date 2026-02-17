@@ -356,11 +356,11 @@ There are many board specific limitations:
 
 - Be very careful with the SSR or Relay, it must mach the Voltage and the Bell type.
 
-- I have tested the project with a "GEYA VSR8" and also with "GEAY GSR1" Foth have practically zero leakage current(I have measured about 5uA). Keep this in mind some SSR have leakage in the mA range and this can cause safety concerns.
+- I have tested the project with a "GEYA GSR1" and also with "GEYA VSR8". Keep this in mind some SSR have leakage in the mA range and this can cause safety concerns.
 
-- A MOV and or a TVS diode (parallel with the SSR) can absorb a lot of overvoltages due to transients.
+- A MOV and a TVS diode (parallel with the SSR) can absorb a lot of overvoltages due to transients. It is a must for this project (reliability).
 
-- A [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) probably work but I have not tested. I cannot see the point(for AC bells) given how good the SSRs have become.
+- A [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) probably work but I have not tested. I believe there is no reason to use electromechanical relays(for AC bells) given how good and affortable the SSRs have become.
 
 ### Why this project is created
 I have tested a lot of timer solutions in the past. The limitations were severe, and I document them here without some particular order.

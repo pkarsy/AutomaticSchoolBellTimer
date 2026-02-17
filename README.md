@@ -28,14 +28,20 @@
 - Free software. Both tasmota and the berry script are open source with very permissive licences.
 
 ### Tips (Important, do not skip this)
-- Prefer to buy some parts and wait a few days, than using old/broken/unsuitable parts you happen to already own. This project is about reliability.
-Read the README before hunting parts in online stores.
+- Prefer to buy some parts and wait a few days, than using old/broken/unsuitable parts you happen to already own. This project is about reliability. Read the README before hunting parts in online stores.
+
+- The most important part is a good quality SSR with low leakage current (see below)
+
 - If you are going to solder the headers yourself, only solder the pins that you need. This will make the assembly easier and less error prone.
-- Instead of soldering headers, you can also solder screw 2.54mm terminals. The assembly is easier, and the terminals are more reliable. For stranded cables use crimbs.
-- Avoid Micro-USB boards. They are very unreliable in the long run(SMD, easily crack, unexpectedly and with minor mechanical stress.). The micro-usb cable gradually disapears, and is probable you will not find one in usable condition, if you need a replacement.
-- The LEDs with cable and resistor , even with the Dupont connectors can be found on online stores.
+
+- Avoid Micro-USB boards. They are very unreliable in the long run(SMD, crack unexpectedly and with minor mechanical stress). The micro-usb cable gradually disapears, and is probable you will not find one in usable condition, if you need a replacement.
+
+- The LED with cable and resistor , even with the Dupont connectors can be found on online stores.
+
 - Boards with chip antennas (my obseravation) seem to have very bad Wifi signal. PCB antennas are better.
+
 - Some USB-C cables are charge only, so you cannot communicate with the board. Make sure you use a data cable, especially at the final installation.
+
 - A paper with recovery instructions password, pinout etc. folded and inside the timer box, will save your day a few years later.
 
 
@@ -333,25 +339,39 @@ There are many board specific limitations:
 
 - Some boards have only one micro-usb version. Avoid it.
 
-- Generally avoid tiny boards, almost always are missing something useful. But most importantly some/all use Chip Antennas. Some sources claim it can be OK, but I disagree, the 2 different chip antenna boards I have tested, perform very poorly (2 meters range, unusable for the bell timer). If you are insisiting on using chip antenna, first check the reviews for this specific board. On the contrary PCB antenna boards are usually fine.
+- Generally avoid tiny boards, almost always are missing something useful. But most importantly some/all use Chip Antennas. Some sources claim it can be OK, but I disagree, the 2 different chip antenna boards I have tested, perform very poorly (2 meters range, unusable for the bell timer). If you are insisiting on using chip antenna, test it and check the signal (Tasmota Main -> Information) and move aroud ti see how it performs. All PCB antenna boards I have tested are fine.
 
 - ESP8266 boards do NOT work. They cannot run the Berry interpreter.
 
 ### Relay types
-I have tested the project with a "GEYA VSR8" and also with "FOTEK" Solid State Relay(AC Mains type). It should work with a [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) (Not tested). Both Mechanical Relays and SSR can have failures, it seems the SSR (zero crossing type) are more suitable for Elctromechanical Bells. A MOV and or a TVS diode (parallel with the SSR) can absorb a lot of overvoltages due to transients. Be very careful with the SSR or Relay, it must mach the Voltage and the Bell type.
 
+- Be very careful with the SSR or Relay, it must mach the Voltage and the Bell type.
+
+- I have tested the project with a "GEYA VSR8" and also with "GEAY GSR1" Foth have practically zero leakage current(I have measured about 5uA). Keep this in mind some SSR have leakage in the mA range and this can cause safety concerns.
+
+- A MOV and or a TVS diode (parallel with the SSR) can absorb a lot of overvoltages due to transients.
+
+- A [5V Relay breakout](https://duckduckgo.com/?q=5V+Relay+breakout+single&t=lm&iar=images&iax=images&ia=images) probably work but I have not tested. I cannot see the point(for AC bells) given how good the SSRs have become.
 
 ### Why this project is created
 I have tested a lot of timer solutions in the past. The limitations were severe, and I document them here without some particular order.
 
 - Very limited number of timers, usually smaller than the 14-20 a school needs.
+
 - Hard to use, almost unusable hardware control panel. Each one has a different interface.
+
 - Severe time drift. This means constant maintenance and/or that the bell never rings at the expected time. A few minutes/even seconds error does not seem to be a problem at first glance, but the real problem is the argument with the students that the time is passed, that they are gonna loose the bus etc.
+
 - Not capable of switching to Daylight savings time. Even WIFI plugs have problems on this.
+
 - Computer based solutions are overkill and suffer from complexity and unreliability. Operating system updates, broken hardware, high electricity consumption, audio equipment maintainance, are some of the drawbacks.
+
 - Wall WIFI plugs like TUYA, sonoff etc have almost always the problem with limited number of timers. Every one needs a different mobile application, and they can ONLY be controlled by their respective modile app.
+
 - Especially WIFI plugs cannot be used as [dry(no voltage) contacts](https://en.wikipedia.org/wiki/Dry_contact) (See **electrical connection**). Usually this alone is a deal braker.
+
 - Wifi based timers do not have internal battery backed RTC, and without network even temporarily, will lose the time.
+
 - Limited/No protection from moisture and dust.
 
 ### Another solution to protect the web page(additonally/instead of password).
